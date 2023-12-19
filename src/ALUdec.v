@@ -39,12 +39,21 @@ case (opcode)
         case (add_rshift_type)
           `FNC2_SRL: ALUop = `ALU_SRL;
           `FNC2_SRA: ALUop = `ALU_SRA;
-          default : ALUop = `ALU_XXX;
+          default  : ALUop = `ALU_XXX;
         endcase
       end;
-      default     : ALUop = `ALU_XXX;
+      default      : ALUop = `ALU_XXX;
     endcase
   end
+
+  `OPC_LUI         : ALUop = `ALU_COPY_B;
+  
+  `OPC_JAL,
+  `OPC_JALR,
+  `OPC_BRANCH,
+  `OPC_LOAD,
+  `OPC_STORE,
+  `OPC_AUIPC       : ALUop = `ALU_ADD;
 
   default : ALUop = `ALU_XXX;
 endcase
