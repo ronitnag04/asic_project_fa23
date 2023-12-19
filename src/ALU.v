@@ -25,7 +25,7 @@ always @(*) begin
         `ALU_AND    : Out <= A & B;  
         `ALU_OR     : Out <= A | B;  
         `ALU_XOR    : Out <= A ^ B;  
-        `ALU_SLT    : Out <= ($signed(A) < $(signed(B))) ? 32'd1 : 32'd0;  
+        `ALU_SLT    : Out <= ($signed(A) < $signed(B)) ? 32'd1 : 32'd0;  
         `ALU_SLTU   : Out <= (A < B) ? 32'd1 : 32'd0;  
         `ALU_SLL    : Out <= A << B;  
         `ALU_SRA    : Out <= A >>> B;  
