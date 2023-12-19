@@ -27,7 +27,7 @@ always @(*) begin
           case (add_rshift_type)
             `FNC2_ADD: ALUop <= `ALU_ADD;
             `FNC2_SUB: ALUop <= `ALU_SUB;
-            default: `ALUop <= `ALU_XXX;
+            default: ALUop <= `ALU_XXX;
           endcase
         end
         `FNC_SLL     : ALUop <= `ALU_SLL;
