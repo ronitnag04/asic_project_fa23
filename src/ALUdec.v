@@ -42,7 +42,7 @@ always @(*) begin
             `FNC2_SRA: ALUop <= `ALU_SRA;
             default  : ALUop <= `ALU_XXX;
           endcase
-        end;
+        end
         default      : ALUop <= `ALU_XXX;
       endcase
     end
