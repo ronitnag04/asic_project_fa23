@@ -28,7 +28,7 @@ always @(*) begin
         `ALU_SLT    : Out <= ($signed(A) < $signed(B)) ? 32'd1 : 32'd0;  
         `ALU_SLTU   : Out <= (A < B) ? 32'd1 : 32'd0;  
         `ALU_SLL    : Out <= A << B;  
-        `ALU_SRA    : Out <= A >>> B;  
+        `ALU_SRA    : Out <= $signed(A) >>> B;  
         `ALU_SRL    : Out <= A >> B;  
         `ALU_COPY_B : Out <= B;   
         `ALU_XXX    : Out <= 32'd0;   
