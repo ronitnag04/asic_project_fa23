@@ -38,13 +38,13 @@ module ALUTestVectorTestbench();
         input add_rshift_type;
         input integer test_num;
         if ( REFout !== DUTout ) begin
-            $display("Test %d", test_num);
+            $display("Test %0d", test_num);
             $display("\tFAIL: Incorrect result for opcode %b, funct: %b, add_rshift_type: %b", opcode, funct, add_rshift_type);
             $display("\tA: 0x%h, B: 0x%h, DUTout: 0x%h, REFout: 0x%h", A, B, DUTout, REFout);
         $finish();
         end
         else begin
-            $display("Test %d", test_num);
+            $display("Test %0d", test_num);
             $display("PASS: opcode %b, funct %b, add_rshift_type %b", opcode, funct, add_rshift_type);
             $display("\tA: 0x%h, B: 0x%h, DUTout: 0x%h, REFout: 0x%h", A, B, DUTout, REFout);
         end
@@ -71,7 +71,7 @@ module ALUTestVectorTestbench();
     localparam testcases = 130;
 
     reg [106:0] testvector [0:testcases-1]; // Each testcase has 107 bits:
-    // 64 for A and B, 32 for REFout, 7 for
+    // 64 0for A and B, 32 for REFout, 7 for
     // opcode, 3 for funct, 1 for add_rshift_type
 
     integer i; // integer used for looping in non-generate statement
