@@ -20,7 +20,6 @@ module ALUdec(
 always @(*) begin
   case (opcode)
 
-    `OPC_ARI_ITYPE,
     `OPC_ARI_RTYPE: begin
       case (funct)
         `FNC_ADD_SUB : begin
@@ -30,6 +29,26 @@ always @(*) begin
             default: ALUop <= `ALU_XXX;
           endcase
         end
+        `FNC_SLL     : ALUop <= `ALU_SLL;
+        `FNC_SLT     : ALUop <= `ALU_SLT;
+        `FNC_SLTU    : ALUop <= `ALU_SLTU;
+        `FNC_XOR     : ALUop <= `ALU_XOR;
+        `FNC_OR      : ALUop <= `ALU_OR;
+        `FNC_AND     : ALUop <= `ALU_AND;
+        `FNC_SRL_SRA : begin
+          case (add_rshift_type)
+            `FNC2_SRL: ALUop <= `ALU_SRL;
+            `FNC2_SRA: ALUop <= `ALU_SRA;
+            default  : ALUop <= `ALU_XXX;
+          endcase
+        end
+        default      : ALUop <= `ALU_XXX;
+      endcase
+    end
+
+    `OPC_ARI_ITYPE: begin
+      case (funct)
+        `FNC_ADD_SUB : ALUop <= `ALU_ADD;
         `FNC_SLL     : ALUop <= `ALU_SLL;
         `FNC_SLT     : ALUop <= `ALU_SLT;
         `FNC_SLTU    : ALUop <= `ALU_SLTU;
