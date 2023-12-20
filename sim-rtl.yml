@@ -18,8 +18,8 @@ simOptions: &SIM_OPTIONS
   - "-sverilog"
 
 simVerilogSrc: &SIM_VERILOG_SRC
-  - "src/ALU.v"
-  - "src/ALUdec.v"
+  - "src/stage2/ALU.v"
+  - "src/stage2/ALUdec.v"
   - "src/Riscv151.v"
   - "src/Memory151.v"
   - "src/ExtMemModel.v"
@@ -27,8 +27,8 @@ simVerilogSrc: &SIM_VERILOG_SRC
   - "src/Cache.v"
   - "src/riscv_top.v"
   - "src/riscv_arbiter.v"
-  - "src/ALUTestbench.v"
-  - "src/ALUTestVectorTestbench.v"
+  - "src/stage2/ALUTestbench.v"
+  - "src/stage2/ALUTestVectorTestbench.v"
   - "src/riscv_test_harness.v"
   # Add more files here if you need
 

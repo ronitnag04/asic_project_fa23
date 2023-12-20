@@ -9,7 +9,7 @@
 //    Out: The chosen function mapped to A and B.
 
 `include "Opcode.vh"
-`include "ALUop.vh"
+`include "stage2/ALUop.vh"
 
 module ALU(
     input [31:0] A,B,

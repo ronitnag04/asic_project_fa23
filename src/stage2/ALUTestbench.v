@@ -11,7 +11,7 @@
 `timescale 1ns / 1ps
 
 `include "Opcode.vh"
-`include "ALUop.vh"
+`include "stage2/ALUop.vh"
 
 module ALUTestbench();
 

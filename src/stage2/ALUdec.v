@@ -7,7 +7,7 @@
 //
 
 `include "Opcode.vh"
-`include "ALUop.vh"
+`include "stage2/ALUop.vh"
 
 module ALUdec(
   input [6:0]       opcode,
