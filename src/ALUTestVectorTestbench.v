@@ -36,12 +36,15 @@ module ALUTestVectorTestbench();
         input [6:0] opcode;
         input [2:0] funct;
         input add_rshift_type;
+        input integer test_num;
         if ( REFout !== DUTout ) begin
-            $display("FAIL: Incorrect result for opcode %b, funct: %b, add_rshift_type: %b", opcode, funct, add_rshift_type);
+            $display("Test %d", test_num);
+            $display("\tFAIL: Incorrect result for opcode %b, funct: %b, add_rshift_type: %b", opcode, funct, add_rshift_type);
             $display("\tA: 0x%h, B: 0x%h, DUTout: 0x%h, REFout: 0x%h", A, B, DUTout, REFout);
         $finish();
         end
         else begin
+            $display("Test %d", test_num);
             $display("PASS: opcode %b, funct %b, add_rshift_type %b", opcode, funct, add_rshift_type);
             $display("\tA: 0x%h, B: 0x%h, DUTout: 0x%h, REFout: 0x%h", A, B, DUTout, REFout);
         end
@@ -87,7 +90,7 @@ module ALUTestVectorTestbench();
             REFout <= testvector[i][31:0];
 
             @(negedge Clock);
-            checkOutput(opcode, funct, add_rshift_type);
+            checkOutput(opcode, funct, add_rshift_type, i);
         end
         $display("\n\nALL TESTS PASSED!");
         $vcdplusoff;
