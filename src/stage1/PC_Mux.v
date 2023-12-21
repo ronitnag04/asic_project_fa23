@@ -18,7 +18,7 @@ module PC_Mux(
 );
 
 always @(*) begin
-    PC_Mux_Out <= (PC_Sel == `PC_SEL_PC_4) ? PC_4 : ALU_Out;
+    PC_Mux_Out <= (PC_Sel == `PC_SEL_PC_4) ? PC_4 : ALU_Out;    // TODO: Should only use 31:2 of ALU to prevent misalign?
 end
 
 endmodule
