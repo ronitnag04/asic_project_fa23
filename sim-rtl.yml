@@ -30,8 +30,6 @@ simVerilogSrc: &SIM_VERILOG_SRC
   - "src/stage2/ALUTestbench.v"
   - "src/stage2/ALUTestVectorTestbench.v"
   - "src/riscv_test_harness.v"
-  - "src/stage1/PC_Mux.v"
-  - "src/stage1/PC_Reg.v"
   - "src/stage1/PC.v"
   - "src/stage1/PCTestbench.v"
   # Add more files here if you need
