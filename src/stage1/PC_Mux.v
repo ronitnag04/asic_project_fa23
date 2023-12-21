@@ -14,11 +14,11 @@ module PC_Mux(
     input [31:0] PC_4, ALU_Out,
     input PC_Sel,
 
-    output [31:0] PC_Mux_Out,
+    output reg [31:0] PC_Mux_Out
 );
 
 always @(*) begin
-    assign PC_Mux_Out = (PC_Sel == `PC_SEL_PC_4) ? PC_4 : ALU_Out;
+    PC_Mux_Out <= (PC_Sel == `PC_SEL_PC_4) ? PC_4 : ALU_Out;
 end
 
 endmodule

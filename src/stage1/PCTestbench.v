@@ -4,9 +4,9 @@
 //      1)  PC
 
 `timescale 1ns / 1ps
-`include "stage1_control.vh"
+`include "stage1/stage1_control.vh"
 
-module ALUTestVectorTestbench();
+module PCTestbench();
 
     parameter Halfcycle = 5; //half period is 5ns
 
@@ -23,7 +23,7 @@ module ALUTestVectorTestbench();
     reg [31:0] ALU_Out, REF_PC_Out;
     reg reset, stall, PC_Sel;
 
-    wire [31:0] DUT_PC_Out, 
+    wire [31:0] DUT_PC_Out; 
 
 
     // Task for checking output
@@ -36,14 +36,14 @@ module ALUTestVectorTestbench();
         input integer test_num;
         if ( REF_PC_Out !== DUT_PC_Out ) begin
             $display("Test %0d", test_num);
-            $display("\tFAIL: Incorrect result for PC_Sel %b, reset: %b, stall: %b", PC_Sel, reset, stall);
-            $display("\tALU_Out: 0x%h, DUT_PC_Out: 0x%h, REF_PC_Out: 0x%h", ALU_Out, DUT_PC_Out, REF_PC_Out);
+            $display("FAIL: Incorrect result for PC_Sel %b, reset: %b, stall: %b, ALU_Out: 0x%h", PC_Sel, reset, stall, ALU_Out);
+            $display("\tDUT_PC_Out: 0x%h, REF_PC_Out: 0x%h", DUT_PC_Out, REF_PC_Out);
         $finish();
         end
         else begin
             $display("Test %0d", test_num);
-            $display("PASS: PC_Sel %b, reset: %b, stall: %b", PC_Sel, reset, stall);
-            $display("\tALU_Out: 0x%h, DUT_PC_Out: 0x%h, REF_PC_Out: 0x%h",ALU_Out, DUT_PC_Out, REF_PC_Out);
+            $display("PASS: PC_Sel %b, reset: %b, stall: %b, ALU_Out: 0x%h", PC_Sel, reset, stall, ALU_Out);
+            $display("\tDUT_PC_Out: 0x%h, REF_PC_Out: 0x%h", DUT_PC_Out, REF_PC_Out);
         end
     endtask
 
@@ -85,7 +85,8 @@ module ALUTestVectorTestbench();
             reset <= testvector[i][65];
             stall <= testvector[i][66];
 
-            @(negedge Clock);
+            @(posedge Clock);
+            #1;
             checkOutput(ALU_Out, REF_PC_Out, PC_Sel, reset, stall, i);
         end
         $display("\n\nALL TESTS PASSED!");

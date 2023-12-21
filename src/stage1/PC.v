@@ -18,27 +18,27 @@ module PC (
     input stall,
     input PC_Sel,
 
-    output [31:0] PC_Out,
+    output [31:0] PC_Out
 );
 
 wire [31:0] PC_4, PC_Mux_Out;
 assign PC_4 = PC_Out + 4;
 
-PC_Reg reg (
+PC_Reg PCREG (
     .PC_In(PC_Mux_Out),
     .clk(clk),
     .reset(reset),
     .stall(stall),
 
-    .PC_Out(PC_Out),
+    .PC_Out(PC_Out)
 ); 
 
-PC_Mux mux (
-    PC_4(PC_4), 
-    ALU_Out(ALU_Out),
-    PC_Sel(PC_Sel),
+PC_Mux PCMUX (
+    .PC_4(PC_4), 
+    .ALU_Out(ALU_Out),
+    .PC_Sel(PC_Sel),
 
-    PC_Mux_Out(PC_Mux_Out),
+    .PC_Mux_Out(PC_Mux_Out)
 );
 
 endmodule

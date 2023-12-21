@@ -18,7 +18,7 @@ module PC_Reg(
     input reset,
     input stall,
 
-    output reg [31:0] PC_Out,
+    output reg [31:0] PC_Out
 );
 
 always @(posedge clk) begin
