@@ -8,7 +8,7 @@
 // Outputs:
 //    PC_Mux_Out: 32-bit PC value for next state to connect to PC_In
 
-`include "stage1_control.vh"
+`include "stage1/stage1_control.vh"
 
 module PC_Mux(
     input [31:0] PC_4, ALU_Out,

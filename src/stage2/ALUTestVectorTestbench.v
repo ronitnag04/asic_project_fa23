@@ -71,7 +71,7 @@ module ALUTestVectorTestbench();
     localparam testcases = 130;
 
     reg [106:0] testvector [0:testcases-1]; // Each testcase has 107 bits:
-    // 64 0for A and B, 32 for REFout, 7 for
+    // 64 for A and B, 32 for REFout, 7 for
     // opcode, 3 for funct, 1 for add_rshift_type
 
     integer i; // integer used for looping in non-generate statement

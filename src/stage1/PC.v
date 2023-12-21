@@ -1,29 +1,44 @@
 // Module: PC.v
-// Desc:   32-bit Program Counter for the RISC-V Processor
+// Desc:   PC unit module
 // Inputs: 
-//    PC_In: 32-bit PC value to latch
+//    ALU_Out: 32-bit value from ALU_Out in stage2
 //    clk: Clock line
 //    reset: Reset line
+//
 //    stall: Stall counter
+//    PC_Sel: Select next PC
 // 						
 // Outputs:
 //    PC_Out: 32-bit PC value for current state
 
-
-`include "const.vh"
-
-module PC(
-    input [31:0] PC_In,
+module PC (
+    input [31:0] ALU_Out,
     input clk,
     input reset,
     input stall,
+    input PC_Sel,
 
-    output reg [31:0] PC_Out,
+    output [31:0] PC_Out,
 );
 
-always @(posedge clk) begin
-    if (reset == 1'b1) PC_Out <= `PC_RESET;
-    else if (stall == 1'b0) PC_Out <= PC_In; 
-end
+wire [31:0] PC_4, PC_Mux_Out;
+assign PC_4 = PC_Out + 4;
+
+PC_Reg reg (
+    .PC_In(PC_Mux_Out),
+    .clk(clk),
+    .reset(reset),
+    .stall(stall),
+
+    .PC_Out(PC_Out),
+); 
+
+PC_Mux mux (
+    PC_4(PC_4), 
+    ALU_Out(ALU_Out),
+    PC_Sel(PC_Sel),
+
+    PC_Mux_Out(PC_Mux_Out),
+);
 
 endmodule
