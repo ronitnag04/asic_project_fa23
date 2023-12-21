@@ -90,7 +90,7 @@ functs_rtype = \
 }
 
 random.seed(os.urandom(32))
-file = open('testvectors.input', 'w')
+file = open('ALUtestvectors.input', 'w')
 
 def gen_vector(op, f, a, b, opcode, funct3, funct7):
     A = a(random.randint(0, 0xffffffff))

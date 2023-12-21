@@ -79,7 +79,7 @@ module ALUTestVectorTestbench();
     initial 
     begin
         $vcdpluson;
-        $readmemb("../../tests/testvectors.input", testvector);
+        $readmemb("../../tests/stage2/ALUtestvectors.input", testvector);
         for (i = 0; i < testcases; i = i + 1) begin
             @(negedge Clock);
             opcode <= testvector[i][106:100];
