@@ -23,7 +23,7 @@ wire [31:0] R_imm, I_imm, Istar_imm, S_imm, B_imm, U_imm, J_imm;
 
 assign R_imm     = 32'b0;                           // Unused so value can be anything testbench expects 0
 assign I_imm     = {{21{inst[31]}}, inst[30:20]};
-assign Istar_imm = {{27{0}}, inst[24:20]};          // No sign-extension necessary 
+assign Istar_imm = {{27{1'b0}}, inst[24:20]};          // No sign-extension necessary 
                                                     // Shifter should sign extend rs1, but imm (i.e. shift amount) is [0-31]
 assign S_imm     = {{21{inst[31]}}, inst[30:25], inst[11:7]};
 assign B_imm     = {{20{inst[31]}}, inst[7], inst[30:25], inst[11:8], 1'b0};
