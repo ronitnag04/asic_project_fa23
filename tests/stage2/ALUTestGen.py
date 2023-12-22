@@ -3,10 +3,7 @@
 import random
 import os
 from functools import reduce
-
-def bin(x, width):
-    if x < 0: x = (~x) + 1
-    return ''.join([(x & (1 << i)) and '1' or '0' for i in range(width-1, -1, -1)])
+from tests.utils import bin
 
 def sra(a, b):
     if b == 0:
@@ -90,7 +87,7 @@ functs_rtype = \
 }
 
 random.seed(os.urandom(32))
-file = open('ALUtestvectors.input', 'w')
+file = open('tests/stage2/ALUtestvectors.input', 'w')
 
 def gen_vector(op, f, a, b, opcode, funct3, funct7):
     A = a(random.randint(0, 0xffffffff))

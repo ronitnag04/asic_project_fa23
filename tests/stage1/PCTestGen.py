@@ -2,6 +2,7 @@
 
 import random
 import os
+from tests.utils import bin
 
 # Define Constants here
 # From src/stage1/stage1_control.vh
@@ -12,12 +13,7 @@ PC_SEL_ALU_OUT = 0b1
 PC_RESET = 0x00002000
 
 random.seed(os.urandom(32))
-file = open('PCtestvectors.input', 'w')
-
-
-def bin(x, width):
-    if x < 0: x = (~x) + 1
-    return ''.join([(x & (1 << i)) and '1' or '0' for i in range(width-1, -1, -1)])
+file = open('tests/stage1/PCtestvectors.input', 'w')
 
 
 def PC_valid(PC):
