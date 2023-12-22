@@ -16,7 +16,6 @@ module ALUdec(
   output reg [3:0]  ALUop
 );
 
-  // Implement your ALU decoder here, then delete this comment
 always @(*) begin
   case (opcode)
 
