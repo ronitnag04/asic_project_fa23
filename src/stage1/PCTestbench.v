@@ -65,7 +65,7 @@ module PCTestbench();
     // testvector input file, which you can find with the command:
     // % wc -l ../sim/tests/testvectors.input
     // //////////////////////////////////////////////////////////////
-    localparam testcases = 117;
+    localparam testcases = 330;
 
     reg [66:0] testvector [0:testcases-1]; // Each testcase has 67 bits:
     // [31:0] ALU_Out, [63:32] REF_PC_Out

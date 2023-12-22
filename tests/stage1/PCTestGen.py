@@ -47,8 +47,8 @@ def get_ref_PC(ALU_Out, PC_Sel, reset, stall):
 def random_inputs():
     ALU_Out = PC_valid(random.randint(0, 0xffffffff))
     PC_Sel = 0 if random.randint(0, 99) < 70 else 0          # Step 70% of the time
-    reset =  1 if random.randint(0, 99) < 10 else 0          # Reset 10% of the time
-    stall =  1 if random.randint(0, 99) < 10 else 0          # Stall 10% of the time
+    reset =  1 if random.randint(0, 99) < 20 else 0          # Reset 10% of the time
+    stall =  1 if random.randint(0, 99) < 20 else 0          # Stall 10% of the time
 
     REF_PC_Out = get_ref_PC(ALU_Out, PC_Sel, reset, stall)
 
@@ -76,7 +76,7 @@ def gen_vector(ALU_Out, REF_PC_Out, PC_Sel, reset, stall):
                     bin(ALU_Out, 32)])
 
 
-random_tests = 100
+random_tests = 300
 
 file.write(gen_vector(0, PC_RESET, 0, 1, 0) + '\n') # Reset vector to start
 for i in range(random_tests):
@@ -102,6 +102,23 @@ file.write(gen_vector(0x0000_ffff, 0x0000_2000, 0, 1, 0) + '\n')    # Stay at 0x
 file.write(gen_vector(0x0000_ffff, 0x0000_2000, 0, 1, 0) + '\n')    # Stay at 0x2000 while reset is high
 file.write(gen_vector(0x0000_ffff, 0x0000_2000, 0, 1, 0) + '\n')    # Stay at 0x2000 while reset is high
 file.write(gen_vector(0x0000_ffff, 0x0000_2004, 0, 0, 0) + '\n')    # Step once reset is low
+
+# Test 3: Stall
+file.write(gen_vector(0x0000_0000, 0x0000_2000, 0, 1, 0) + '\n')    # Reset PC
+file.write(gen_vector(0, 0x0000_2004, 0, 0, 0) + '\n')              # Step PC
+file.write(gen_vector(0, 0x0000_2008, 0, 0, 0) + '\n')              # Step PC
+file.write(gen_vector(0, 0x0000_2008, 0, 0, 1) + '\n')              # Stall PC
+file.write(gen_vector(0, 0x0000_2008, 0, 0, 1) + '\n')              # Stall PC
+file.write(gen_vector(0, 0x0000_2008, 0, 0, 1) + '\n')              # Stall PC
+file.write(gen_vector(0, 0x0000_200c, 0, 0, 0) + '\n')              # Step PC
+file.write(gen_vector(0, 0x0000_200c, 0, 0, 1) + '\n')              # Stall PC
+file.write(gen_vector(0, 0x0000_2010, 0, 0, 0) + '\n')              # Step PC
+
+# Test 4: ALU Load
+file.write(gen_vector(0x0000_0000, 0x0000_2000, 0, 1, 0) + '\n')    # Reset PC
+file.write(gen_vector(0x0000_5230, 0x0000_2004, 0, 0, 0) + '\n')    # Step PC
+file.write(gen_vector(0x0000_5230, 0x0000_5230, 1, 0, 0) + '\n')    # Load from ALU
+file.write(gen_vector(0, 0x0000_5234, 0, 0, 0) + '\n')              # Step PC
 
 # TODO: Test ALU Misaligned address?
 
