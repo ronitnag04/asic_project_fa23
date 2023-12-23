@@ -5,18 +5,14 @@
 
 `timescale 1ns / 1ps
 `include "stage1/stage1_control.vh"
+`define PROP_DELAY (`clk_PERIOD / 5.0)
 
 module PCTestbench();
+    reg clk;
 
-    parameter Halfcycle = 5; //half period is 5ns
-
-    localparam Cycle = 2*Halfcycle;
-
-    reg Clock;
-
-    // Clock Signal generation:
-    initial Clock = 0; 
-    always #(Halfcycle) Clock = ~Clock;
+    // clk Signal generation:
+    initial clk = 1'b0; 
+    always #(`clk_PERIOD*0.5) clk = ~clk;
 
     // Wires to test the PC Dut
     // These are read from the input vector
@@ -52,7 +48,7 @@ module PCTestbench();
 
     PC DUT1(
         .alu_out(alu_out),
-        .clk(Clock),
+        .clk(clk),
         .reset(reset),
         .stall(stall),
         .pc_sel(pc_sel),
@@ -78,15 +74,15 @@ module PCTestbench();
         $vcdpluson;
         $readmemb("../../tests/stage1/PCtestvectors.input", testvector);
         for (i = 0; i < testcases; i = i + 1) begin
-            @(negedge Clock);
+            @(negedge clk);
             alu_out <= testvector[i][31:0];
             REF_pc_out <= testvector[i][63:32];
             pc_sel <= testvector[i][64];
             reset <= testvector[i][65];
             stall <= testvector[i][66];
 
-            @(posedge Clock);
-            #1;
+            @(posedge clk);
+            #(`PROP_DELAY);
             checkOutput(alu_out, REF_pc_out, pc_sel, reset, stall, i);
         end
         $display("\n\nALL TESTS PASSED!");
