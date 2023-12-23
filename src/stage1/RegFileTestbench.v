@@ -13,7 +13,7 @@ module RegFileTestbench();
     initial clk = 1'b0; 
     always #(`CLOCK_PERIOD*0.5) clk = ~clk;
 
-    // Wires to test the ImmGen Dut
+    // Wires to test the DUT
     // These are read from the input vector
     reg [4:0] rs1, rs2, rd;
     reg [31:0] wb_data;
