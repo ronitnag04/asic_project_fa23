@@ -5,14 +5,14 @@
 
 `timescale 1ns / 1ps
 `include "stage1/stage1_control.vh"
-`define PROP_DELAY (`clk_PERIOD / 5.0)
+`define PROP_DELAY (`CLOCK_PERIOD / 5.0)
 
 module PCTestbench();
     reg clk;
 
-    // clk Signal generation:
+    // Clock Signal generation:
     initial clk = 1'b0; 
-    always #(`clk_PERIOD*0.5) clk = ~clk;
+    always #(`CLOCK_PERIOD*0.5) clk = ~clk;
 
     // Wires to test the PC Dut
     // These are read from the input vector
