@@ -68,11 +68,11 @@ module ComparatorTestbench();
         readmemb("../../tests/stage1/Comparatortestvectors.input", testvector);
         for (i = 0; i < testcases; i = i + 1) begin
             @(negedge clk);
-                rs1d   <= testvector[i][31:0]
-                rs2d   <= testvector[i][63:32]
-                s      <= testvector[i][64]
-                REF_lt <= testvector[i][65]
-                REF_eq <= testvector[i][66]
+                rs1d   <= testvector[i][31:0];
+                rs2d   <= testvector[i][63:32];
+                s      <= testvector[i][64];
+                REF_lt <= testvector[i][65];
+                REF_eq <= testvector[i][66];
 
             @(posedge clk);
             #(`PROP_DELAY);
