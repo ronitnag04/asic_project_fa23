@@ -36,13 +36,17 @@ simVerilogSrc: &SIM_VERILOG_SRC
   - "src/stage1/ImmGenDP.v"
   - "src/stage1/ImmGen.v"
   - "src/stage1/ImmGenTestbench.v"
+  - "src/stage1/RegFile.v"
+  - "src/stage1/RegFileTestbench.v"
   # Add more files here if you need
 
+
+#tb_name: &TB_NAME "rocketTestHarness"
 #tb_name: &TB_NAME "ALUTestbench"
 #tb_name: &TB_NAME "ALUTestVectorTestbench"
-#tb_name: &TB_NAME "rocketTestHarness"
 #tb_name: &TB_NAME "PCTestbench"
-tb_name: &TB_NAME "ImmGenTestbench"
+#tb_name: &TB_NAME "ImmGenTestbench"
+tb_name: &TB_NAME "RegFileTestbench"
 
 # RTL Simulation Variables
 sim.inputs:
