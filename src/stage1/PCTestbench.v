@@ -20,30 +20,30 @@ module PCTestbench();
 
     // Wires to test the PC Dut
     // These are read from the input vector
-    reg [31:0] ALU_Out, REF_PC_Out;
-    reg reset, stall, PC_Sel;
+    reg [31:0] alu_out, REF_pc_out;
+    reg reset, stall, pc_sel;
 
-    wire [31:0] DUT_PC_Out; 
+    wire [31:0] DUT_pc_out; 
 
 
     // Task for checking output
     task checkOutput;
-        input [31:0] ALU_Out;
-        input [31:0] REF_PC_Out;
-        input PC_Sel;
+        input [31:0] alu_out;
+        input [31:0] REF_pc_out;
+        input pc_sel;
         input reset;
         input stall;
         input integer test_num;
-        if ( REF_PC_Out !== DUT_PC_Out ) begin
+        if ( REF_pc_out !== DUT_pc_out ) begin
             $display("Test %0d", test_num);
-            $display("FAIL: Incorrect result for PC_Sel %b, reset: %b, stall: %b, ALU_Out: 0x%h", PC_Sel, reset, stall, ALU_Out);
-            $display("\tDUT_PC_Out: 0x%h, REF_PC_Out: 0x%h", DUT_PC_Out, REF_PC_Out);
+            $display("FAIL: Incorrect result for pc_sel %b, reset: %b, stall: %b, alu_out: 0x%h", pc_sel, reset, stall, alu_out);
+            $display("\tDUT_pc_out: 0x%h, REF_pc_out: 0x%h", DUT_pc_out, REF_pc_out);
         $finish();
         end
         else begin
             $display("Test %0d", test_num);
-            $display("PASS: PC_Sel %b, reset: %b, stall: %b, ALU_Out: 0x%h", PC_Sel, reset, stall, ALU_Out);
-            $display("\tDUT_PC_Out: 0x%h, REF_PC_Out: 0x%h", DUT_PC_Out, REF_PC_Out);
+            $display("PASS: pc_sel %b, reset: %b, stall: %b, alu_out: 0x%h", pc_sel, reset, stall, alu_out);
+            $display("\tDUT_pc_out: 0x%h, REF_pc_out: 0x%h", DUT_pc_out, REF_pc_out);
         end
     endtask
 
@@ -51,13 +51,13 @@ module PCTestbench();
     // This is where the modules being tested are instantiated. 
 
     PC DUT1(
-        .ALU_Out(ALU_Out),
+        .alu_out(alu_out),
         .clk(Clock),
         .reset(reset),
         .stall(stall),
-        .PC_Sel(PC_Sel),
+        .pc_sel(pc_sel),
 
-        .PC_Out(DUT_PC_Out)       
+        .pc_out(DUT_pc_out)       
     );
 
     /////////////////////////////////////////////////////////////////
@@ -68,8 +68,8 @@ module PCTestbench();
     localparam testcases = 330;
 
     reg [66:0] testvector [0:testcases-1]; // Each testcase has 67 bits:
-    // [31:0] ALU_Out, [63:32] REF_PC_Out
-    // [64] PC_Sel, [65] reset, [66] stall, 
+    // [31:0] alu_out, [63:32] REF_pc_out
+    // [64] pc_sel, [65] reset, [66] stall, 
 
     integer i; // integer used for looping in non-generate statement
 
@@ -79,15 +79,15 @@ module PCTestbench();
         $readmemb("../../tests/stage1/PCtestvectors.input", testvector);
         for (i = 0; i < testcases; i = i + 1) begin
             @(negedge Clock);
-            ALU_Out <= testvector[i][31:0];
-            REF_PC_Out <= testvector[i][63:32];
-            PC_Sel <= testvector[i][64];
+            alu_out <= testvector[i][31:0];
+            REF_pc_out <= testvector[i][63:32];
+            pc_sel <= testvector[i][64];
             reset <= testvector[i][65];
             stall <= testvector[i][66];
 
             @(posedge Clock);
             #1;
-            checkOutput(ALU_Out, REF_PC_Out, PC_Sel, reset, stall, i);
+            checkOutput(alu_out, REF_pc_out, pc_sel, reset, stall, i);
         end
         $display("\n\nALL TESTS PASSED!");
         $vcdplusoff;
