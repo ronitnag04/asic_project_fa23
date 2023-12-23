@@ -29,17 +29,17 @@ module ComparatorTestbench();
     task checkOutput;
         input integer test_num;
 
-        display("Test %0d", test_num);
+        $display("Test %0d", test_num);
         if ( (REF_eq != DUT_eq) || (REF_lt != DUT_lt) ) begin
-            display("FAIL: Incorrect result for rs1d: 0x%h, rs2d: 0x%h, signed: %b", rs1d, rs2d, s);
-            display("\tDUT_eq: 0x%h, REF_eq: 0x%h", DUT_eq, REF_eq);
-            display("\tDUT_lt: 0x%h, REF_lt: 0x%h", DUT_lt, REF_lt);
-        finish();
+            $display("FAIL: Incorrect result for rs1d: 0x%h, rs2d: 0x%h, signed: %b", rs1d, rs2d, s);
+            $display("\tDUT_eq: 0x%h, REF_eq: 0x%h", DUT_eq, REF_eq);
+            $display("\tDUT_lt: 0x%h, REF_lt: 0x%h", DUT_lt, REF_lt);
+        $finish();
         end
         else begin
-            display("PASS: rs1d: 0x%h, rs2d: 0x%h, signed: %b", rs1d, rs2d, s);
-            display("\tDUT_eq: 0x%h, REF_eq: 0x%h", DUT_eq, REF_eq);
-            display("\tDUT_lt: 0x%h, REF_lt: 0x%h", DUT_lt, REF_lt);
+            $display("PASS: rs1d: 0x%h, rs2d: 0x%h, signed: %b", rs1d, rs2d, s);
+            $display("\tDUT_eq: 0x%h, REF_eq: 0x%h", DUT_eq, REF_eq);
+            $display("\tDUT_lt: 0x%h, REF_lt: 0x%h", DUT_lt, REF_lt);
         end
     endtask
 
@@ -64,8 +64,8 @@ module ComparatorTestbench();
 
     initial 
     begin
-        vcdpluson;
-        readmemb("../../tests/stage1/Comparatortestvectors.input", testvector);
+        $vcdpluson;
+        $readmemb("../../tests/stage1/Comparatortestvectors.input", testvector);
         for (i = 0; i < testcases; i = i + 1) begin
             @(negedge clk);
                 rs1d   <= testvector[i][31:0];
@@ -81,9 +81,9 @@ module ComparatorTestbench();
 
         // Manual Tests
 
-        display("\n\nALL TESTS PASSED!");
-        vcdplusoff;
-        finish();
+        $display("\n\nALL TESTS PASSED!");
+        $vcdplusoff;
+        $finish();
     end
 
 endmodule
