@@ -4,18 +4,14 @@
 //      1)  RegFile
 
 `timescale 1ns / 1ps
+`define PROP_DELAY (`CLOCK_PERIOD / 5.0)
 
 module RegFileTestbench();
-
-    parameter Halfcycle = 5; //half period is 5ns
-
-    localparam Cycle = 2*Halfcycle;
-
-    reg Clock;
+    reg clk;
 
     // Clock Signal generation:
-    initial Clock = 1'b0; 
-    always #(Halfcycle) Clock = ~Clock;
+    initial clk = 1'b0; 
+    always #(`CLOCK_PERIOD*0.5) clk = ~clk;
 
     // Wires to test the ImmGen Dut
     // These are read from the input vector
@@ -58,7 +54,7 @@ module RegFileTestbench();
         .wb_data(wb_data),
         .we(we),
         .stall(stall),
-        .clk(Clock),
+        .clk(clk),
         .reset(reset),
 
         .rs1d(DUT_rs1d),
@@ -86,7 +82,7 @@ module RegFileTestbench();
         $vcdpluson;
         $readmemb("../../tests/stage1/RegFiletestvectors.input", testvector);
         for (i = 0; i < testcases; i = i + 1) begin
-            @(negedge Clock);
+            @(negedge clk);
             rs1      <= testvector[i][4:0];
             rs2      <= testvector[i][9:5];
             rd       <= testvector[i][14:10];
@@ -97,10 +93,45 @@ module RegFileTestbench();
             REF_rs1d <= testvector[i][81:50];
             REF_rs2d <= testvector[i][113:82];
 
-            @(posedge Clock);
-            #1;
+            @(posedge clk);
+            #(`PROP_DELAY);
             checkOutput(i);
         end
+
+        // Manual Tests
+        // Test 1: Write only on rising edge of clock
+        $display("\nManual Tests\n");
+        $display("Test 1: Write only on rising edge of clock\n");
+        i = 0;
+        @(negedge clk);
+        reset    <= 1'b0;             // Reset RegFile
+
+        @(negedge clk);
+        rs1      <= 5'b1;
+        rs2      <= 5'b1;
+        rd       <= 5'b1;
+        wb_data  <= 32'h5555_5555;
+        we       <= 1'b1;
+        stall    <= 1'b0;
+        reset    <= 1'b0; 
+        REF_rs1d <= 32'b0;            // Write has not occured, so expect 0
+        REF_rs2d <= 32'b0;
+
+        #(`PROP_DELAY);
+        checkOutput(i);
+        i = i + 1;
+
+        @(posedge clk);
+        REF_rs1d <= 32'h5555_5555;    // Write has occured, so expect h5555_5555
+        REF_rs2d <= 32'h5555_5555;
+
+        #(`PROP_DELAY);
+        checkOutput(i);
+        i = i + 1;
+
+
+
+
         $display("\n\nALL TESTS PASSED!");
         $vcdplusoff;
         $finish();
