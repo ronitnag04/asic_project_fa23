@@ -17,7 +17,6 @@ module ALU(
     output reg [31:0] Out
 );
 
-    // Implement your ALU here, then delete this comment
 always @(*) begin
     case (ALUop)
         `ALU_ADD    : Out <= A + B;  
