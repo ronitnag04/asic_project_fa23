@@ -67,8 +67,12 @@ module ComparatorTestbench();
         $vcdpluson;
         $readmemb("../../tests/stage2/Comparatortestvectors.input", testvector);
         for (i = 0; i < testcases; i = i + 1) begin
-            if (^testvector[i]) $display("Invalid Test %b", testvector[i]);
-            
+            if (^testvector[i] === 1'bx) begin
+                $display("Invalid Test %b", testvector[i]);
+                $vcdplusoff;
+                $finish();
+            end
+
             @(negedge clk);
                 rs1d   <= testvector[i][31:0];
                 rs2d   <= testvector[i][63:32];
