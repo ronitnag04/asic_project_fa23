@@ -28,7 +28,7 @@ module PC (
 always @(posedge clk) begin
     if (reset) pc_out <= `PC_RESET;
     else if (stall) pc_out <= pc_out;
-    else pc_out <= (pc_sel == `pc_sel_PC_4) ? pc_out + 4 : alu_out;
+    else pc_out <= (pc_sel == `PC_SEL_PC_4) ? pc_out + 4 : alu_out;
 end
 
 
