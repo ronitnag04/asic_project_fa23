@@ -42,5 +42,22 @@ for i in range(random_tests):
     file.write(gen_vector(*random_inputs()) + '\n')
 
 # ---------- Extra Tests ---------- 
+# Test 1: Check Equality
+file.write(gen_vector(0, 0, 0, 0, 1) + '\n')        # Signed mode should not affect
+file.write(gen_vector(0, 0, 1, 0, 1) + '\n')
+file.write(gen_vector(42, 42, 0, 0, 1) + '\n')        
+file.write(gen_vector(42, 42, 1, 0, 1) + '\n') 
+
+# Test 2: Check Less Than
+rs1d = int(twos_bin(-200, 32), base=2)
+rs2d = int(twos_bin(-100, 32), base=2)       
+file.write(gen_vector(rs1d, rs2d, 0, 0, 0) + '\n') 
+file.write(gen_vector(rs1d, rs2d, 1, 1, 0) + '\n') 
+
+rs1d = int(twos_bin(200, 32), base=2)
+rs2d = int(twos_bin(100, 32), base=2)       
+file.write(gen_vector(rs1d, rs2d, 0, 0, 0) + '\n') 
+file.write(gen_vector(rs1d, rs2d, 0, 1, 0) + '\n')
+
 
 print(f'Total number of testcases: {testcases}')

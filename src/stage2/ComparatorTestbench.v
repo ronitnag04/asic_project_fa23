@@ -54,7 +54,7 @@ module ComparatorTestbench();
         .lt(DUT_lt)
     );
 
-    localparam testcases = 100; // TODO: Update number of testcases
+    localparam testcases = 108; // TODO: Update number of testcases
 
     reg [113:0] testvector [0:testcases-1]; // Each testcase has 67 bits
     // [31:0] rs1d, [63:32] rs2d, [64] s
