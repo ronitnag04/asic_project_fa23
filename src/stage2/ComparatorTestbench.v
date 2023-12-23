@@ -54,7 +54,7 @@ module ComparatorTestbench();
         .lt(DUT_lt)
     );
 
-    localparam testcases = 108; // TODO: Update number of testcases
+    localparam testcases = 112; // TODO: Update number of testcases
 
     reg [113:0] testvector [0:testcases-1]; // Each testcase has 67 bits
     // [31:0] rs1d, [63:32] rs2d, [64] s
@@ -67,6 +67,8 @@ module ComparatorTestbench();
         $vcdpluson;
         $readmemb("../../tests/stage2/Comparatortestvectors.input", testvector);
         for (i = 0; i < testcases; i = i + 1) begin
+            if (^testvector[i]) $display("Invalid Test %b", testvector[i]);
+            
             @(negedge clk);
                 rs1d   <= testvector[i][31:0];
                 rs2d   <= testvector[i][63:32];
