@@ -48,7 +48,7 @@ module ComparatorTestbench();
     Comparator DUT1(
         .rs1d(rs1d),
         .rs2d(rs2d),
-        .s(S),
+        .s(s),
 
         .eq(DUT_eq),
         .lt(DUT_lt)
@@ -65,7 +65,7 @@ module ComparatorTestbench();
     initial 
     begin
         $vcdpluson;
-        $readmemb("../../tests/stage1/Comparatortestvectors.input", testvector);
+        $readmemb("../../tests/stage2/Comparatortestvectors.input", testvector);
         for (i = 0; i < testcases; i = i + 1) begin
             @(negedge clk);
                 rs1d   <= testvector[i][31:0];
