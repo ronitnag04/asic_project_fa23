@@ -47,9 +47,9 @@ simVerilogSrc: &SIM_VERILOG_SRC
 #tb_name: &TB_NAME "ALUTestbench"
 #tb_name: &TB_NAME "ALUTestVectorTestbench"
 #tb_name: &TB_NAME "PCTestbench"
-#tb_name: &TB_NAME "ImmGenTestbench"
+tb_name: &TB_NAME "ImmGenTestbench"
 #tb_name: &TB_NAME "RegFileTestbench"
-tb_name: &TB_NAME "ComparatorTestbench"
+#tb_name: &TB_NAME "ComparatorTestbench"
 
 # RTL Simulation Variables
 sim.inputs:

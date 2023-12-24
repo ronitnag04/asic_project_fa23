@@ -55,7 +55,7 @@ module ImmGenTestbench();
     // testvector input file, which you can find with the command:
     // % wc -l ../sim/tests/testvectors.input
     // //////////////////////////////////////////////////////////////
-    localparam testcases = 714;
+    localparam testcases = 712;
 
     reg [63:0] testvector [0:testcases-1]; // Each testcase has 64 bits:
     // [31:0] inst, [63:32] REF_Imm
