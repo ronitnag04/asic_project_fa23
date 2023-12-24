@@ -1,7 +1,8 @@
 // Module: ImmGenC.v
 // Desc:   Control for ImmGen
 // Inputs: 
-//    inst: 32-bit instruction 
+//    opcode: 7-bit opcode from inst[6:0]
+//    funct3: 3-bit function code from inst[14:12]
 // 						
 // Outputs:
 //    imm_type: 3-bit encoding for Immediate type
@@ -11,15 +12,11 @@
 `include "Opcode.vh"
 
 module ImmGenC (
-    input [31:0] inst,
+    input [6:0] opcode,
+    input [2:0] funct3,
 
     output reg [2:0] imm_type
 );
-
-wire [6:0] opcode;
-assign opcode = inst[6:0];
-wire [2:0] funct3;
-assign funct3 = inst[14:12];
 
 always @(*) begin
   case (opcode)

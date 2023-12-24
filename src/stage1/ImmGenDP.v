@@ -13,31 +13,33 @@
 `include "stage1/stage1_control.vh"
 
 module ImmGenDP (
-    input [31:0] inst,
+    input [24:0] inst_31_7,
+
     input  [2:0] imm_type,
 
     output [31:0] imm
 );
 
-wire [31:0] R_imm, I_imm, Istar_imm, S_imm, B_imm, U_imm, J_imm;
+// inst         31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10  9  8  7
+// inst_31_7    24 23 22 21 20 19 18 17 16 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
 
-assign R_imm     = 32'b0;                           // Unused so value can be anything testbench expects 0
-assign I_imm     = {{21{inst[31]}}, inst[30:20]};
-assign Istar_imm = {{27{1'b0}}, inst[24:20]};          // No sign-extension necessary 
-                                                    // Shifter should sign extend rs1, but imm (i.e. shift amount) is [0-31]
-assign S_imm     = {{21{inst[31]}}, inst[30:25], inst[11:7]};
-assign B_imm     = {{20{inst[31]}}, inst[7], inst[30:25], inst[11:8], 1'b0};
-assign U_imm     = {inst[31:12], 12'b0};
-assign J_imm     = {{12{inst[31]}}, inst[19:12], inst[20], inst[30:25], inst[24:21], 1'b0};
+wire [31:0] I_imm, Istar_imm, S_imm, B_imm, U_imm, J_imm;
 
-assign imm = (imm_type == `R_TYPE)     ? R_imm :
-             (imm_type == `I_TYPE)     ? I_imm :
+assign I_imm     = {{21{inst_31_7[24]}}, inst_31_7[23:13]};
+assign Istar_imm = {{27{1'b0}}, inst_31_7[17:13]};          // No sign-extension necessary 
+                                                            // Shifter should sign extend rs1, but imm (i.e. shift amount) is [0-31]
+assign S_imm     = {{21{inst_31_7[24]}}, inst_31_7[23:18], inst_31_7[4:0]};
+assign B_imm     = {{20{inst_31_7[24]}}, inst_31_7[0], inst_31_7[23:18], inst_31_7[4:1], 1'b0};
+assign U_imm     = {inst_31_7[24:5], 12'b0};
+assign J_imm     = {{12{inst_31_7[24]}}, inst_31_7[12:5], inst_31_7[13], inst_31_7[23:18], inst_31_7[17:14], 1'b0};
+
+assign imm = (imm_type == `I_TYPE)     ? I_imm :
              (imm_type == `ISTAR_TYPE) ? Istar_imm :
              (imm_type == `S_TYPE)     ? S_imm :
              (imm_type == `B_TYPE)     ? B_imm :
              (imm_type == `U_TYPE)     ? U_imm :
              (imm_type == `J_TYPE)     ? J_imm :
-             32'bx;
+             32'bx;                                         // R-Type testbench expects x
 
 
 endmodule

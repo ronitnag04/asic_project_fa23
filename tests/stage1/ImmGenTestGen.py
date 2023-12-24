@@ -14,7 +14,7 @@ testcases = 0
 imm_types = ['R', 'I', 'I*', 'S', 'B', 'U', 'J']
 
 imm_range_funcs = {
-    'R':  lambda : 0,
+    'R':  lambda : 'x',
     'I':  lambda : random.randint(-(2**11), (2**11)-1),
     'I*': lambda : random.randint(       0, (2**5) -1),
     'S':  lambda : random.randint(-(2**11), (2**11)-1),
@@ -110,8 +110,12 @@ def gen_vector(inst, REF_Imm):
     global testcases
 
     testcases += 1
+    if isinstance(REF_Imm, str):
+        REF_Imm = 'x'*32
+    else:
+        REF_Imm = twos_bin(REF_Imm, 32)
     
-    return ''.join([twos_bin(REF_Imm, 32), # '|', 
+    return ''.join([REF_Imm, # '|', 
                     inst])
 
 

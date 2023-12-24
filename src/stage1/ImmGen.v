@@ -19,13 +19,14 @@ module ImmGen (
 wire [2:0] imm_type;
 
 ImmGenC control(
-    .inst(inst),
+    .opcode(inst[6:0]),
+    .funct3(inst[14:12]),
 
     .imm_type(imm_type)
 );
 
 ImmGenDP datapath(
-    .inst(inst),
+    .inst_31_7(inst[31:7]),
     .imm_type(imm_type),
 
     .imm(imm)
