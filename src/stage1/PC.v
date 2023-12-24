@@ -11,7 +11,6 @@
 // Outputs:
 //    pc_out: 32-bit PC value for current state
 
-`include "stage1/stage1_control.vh"
 `include "const.vh"
 
 module PC (
@@ -28,7 +27,7 @@ module PC (
 always @(posedge clk) begin
     if (reset) pc_out <= `PC_RESET;
     else if (stall) pc_out <= pc_out;
-    else pc_out <= (pc_sel == `PC_SEL_PC_4) ? pc_out + 4 : alu_out;
+    else pc_out <= (pc_sel == 1'b0) ? pc_out + 4 : alu_out;
 end
 
 

@@ -10,7 +10,7 @@
 //         NOTE: I, S, B, U, and J -type immediates are sign-extended
 //               I*-type immediates are NOT sign-extended
 
-`include "stage1/stage1_control.vh"
+`include "stage1/ImmGen.vh"
 
 module ImmGenDP (
     input [24:0] inst_31_7,

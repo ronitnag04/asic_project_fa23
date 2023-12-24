@@ -4,7 +4,6 @@
 //      1)  PC
 
 `timescale 1ns / 1ps
-`include "stage1/stage1_control.vh"
 `define PROP_DELAY (`CLOCK_PERIOD / 5.0)
 
 module PCTestbench();

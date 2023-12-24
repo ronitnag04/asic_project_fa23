@@ -8,7 +8,7 @@
 //    imm_type: 3-bit encoding for Immediate type
 //             NOTE: encoding is in stage1/stage1_control.vh 
 
-`include "stage1/stage1_control.vh"
+`include "stage1/ImmGen.vh"
 `include "Opcode.vh"
 
 module ImmGenC (

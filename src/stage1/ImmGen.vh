@@ -1,10 +1,6 @@
 `ifndef STAGE1_CONTROL
 `define STAGE1_CONTROL
 
-// PC 
-`define PC_SEL_PC_4      1'b0
-`define PC_SEL_ALU_OUT   1'b1
-
 // ImmGen
 `define R_TYPE           3'b000
 `define I_TYPE           3'b001
