@@ -92,8 +92,9 @@ file = open('tests/stage2/ALUtestvectors.input', 'w')
 def gen_vector(op, f, a, b, opcode, funct3, funct7):
     A = a(random.randint(0, 0xffffffff))
     B = b(random.randint(0, 0xffffffff))
-    REFout = f(A,B)
-    return ''.join([opcode, funct3, funct7, bin(A, 32), bin(B, 32), bin(REFout, 32)])
+    REFout = f(A,B) 
+    return ''.join([opcode, funct3, funct7, bin(A % 0x1_0000_0000, 32), 
+                    bin(B % 0x1_0000_0000, 32), bin(REFout % 0x1_0000_0000, 32)])
 
 loops = 5
 
