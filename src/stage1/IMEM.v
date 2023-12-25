@@ -8,6 +8,7 @@
 //      dout: 32-bit Read Data from Memory151 IMEM
 //
 //      clk: Clock line
+//      stall: Stall line
 // 
 // Outputs: 
 //    Valid after posedge clk
@@ -21,6 +22,7 @@
 module IMEM (
     input [31:0] pc,
     input clk,
+    input stall,
 
     output [31:0] addr,
     output reg re,
@@ -34,8 +36,10 @@ assign addr = pc;
 assign inst = dout;
 
 always @(*) begin
-    if (clk == 1'b1) re <= 1'b1;
-    else re <= 1'b0';
+    if (stall == 1'b0) begin
+        if (clk == 1'b1) re <= 1'b1;
+        else re <= 1'b0';
+    end
 end
 
 endmodule

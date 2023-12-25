@@ -75,6 +75,7 @@ PC PC(
 IMEM IMEM(
     .pc(pc),
     .clk(clk),
+    .stall(stall),
 
     .addr(icache_addr),
     .re(icache_re),
