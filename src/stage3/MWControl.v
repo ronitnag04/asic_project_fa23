@@ -35,7 +35,7 @@ always @(*) begin
         `OPC_BRANCH,  
         `OPC_LOAD,  
         `OPC_ARI_ITYPE, 
-        `OPC_ARI_RTYPE : w_mask < 4'b0;
+        `OPC_ARI_RTYPE : w_mask <= 4'b0;
         
         `OPC_STORE : begin
             case (funct3)
