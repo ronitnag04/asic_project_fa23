@@ -89,6 +89,7 @@ module CSRTestbench();
 
             @(negedge clk);
             cur_testvector <= testvector[i];
+            @(posedge clk);
             #(`PROP_DELAY);
             checkOutput(i);
         end
