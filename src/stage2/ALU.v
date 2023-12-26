@@ -29,7 +29,8 @@ always @(*) begin
         `ALU_SLL    : Out <= A << B[4:0];  
         `ALU_SRA    : Out <= $signed(A) >>> B[4:0];  
         `ALU_SRL    : Out <= A >> B[4:0];  
-        `ALU_COPY_B : Out <= B;   
+        `ALU_COPY_B : Out <= B; 
+        `ALU_COPY_A : Out <= A;  
         `ALU_XXX    : Out <= 32'd0;   
     endcase
 end

@@ -74,6 +74,13 @@ always @(*) begin
     `OPC_STORE,
     `OPC_AUIPC       : ALUop <= `ALU_ADD;
 
+    `OPC_CSR         : begin
+      case (funct)
+        `FNC_RW      : ALUop <= `ALU_COPY_A;
+        `FNC_RWI     : ALUop <= `ALU_COPY_B;
+      endcase
+    end
+
     default : ALUop <= `ALU_XXX;
   endcase
 end

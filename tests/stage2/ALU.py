@@ -56,6 +56,7 @@ opcodes = \
     "STORE":    ("0100011", lambda a,b: a+b, lambda a: a, lambda b: b),
     "ITYPE":    ("0010011", lambda a,b: 0, lambda a: a, lambda b: b),
     "RTYPE":    ("0110011", lambda a,b: 0, lambda a: a, lambda b: b),
+    "CSRTYPE":  ("1110011", lambda a,b: 0, lambda a: a, lambda b: b),
 }
 
 functs_itype = \
@@ -86,10 +87,21 @@ functs_rtype = \
     "AND":     ("111", "0", lambda a,b: a&b, lambda a: a, lambda b: b),
 }
 
+functs_csrtype = \
+{
+    "RW":      ("001", lambda a,b: a, lambda a: a, lambda b: b),
+    "RWI":     ("101", lambda a,b: b, lambda a: a, lambda b: b&0x1f),
+}
+
 random.seed(os.urandom(32))
 file = open('tests/stage2/ALUtestvectors.input', 'w')
 
+testcases = 0
+
 def gen_vector(op, f, a, b, opcode, funct3, funct7):
+    global testcases
+    testcases += 1
+
     A = a(random.randint(0, 0xffffffff))
     B = b(random.randint(0, 0xffffffff))
     REFout = f(A,B) 
@@ -109,8 +121,13 @@ for i in range(loops):
             for funct, tup in functs_itype.items():
                 fct, add_rshift_type, f, a, b = tup
                 file.write(gen_vector(funct, f, a, b, oc, fct, add_rshift_type) + '\n')
+        elif opcode == "CSRTYPE":
+            for funct, tup in functs_csrtype.items():
+                fct, f, a, b = tup
+                file.write(gen_vector(funct, f, a, b, oc, fct, "0") + '\n')
         else:
             fct = bin(random.randint(0, 0x7), 3)
             add_rshift_type = bin(random.randint(0, 0x1), 1)
             file.write(gen_vector(fct, f, a, b, oc, fct, add_rshift_type) + '\n')
 
+print(f'Total number of testcases: {testcases}')

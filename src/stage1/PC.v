@@ -30,6 +30,6 @@ always @(posedge clk) begin
     else pc_out <= (pc_sel == 1'b0) ? pc_out + 4 : alu_out;
 end
 
-assert property ((@posedge clk) reset |-> (pc_out == `PC_RESET));
+assert property (@(posedge clk) reset |-> (pc_out == `PC_RESET));
 
 endmodule
