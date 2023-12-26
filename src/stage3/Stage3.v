@@ -95,5 +95,37 @@ Control_MW Control_MW(
     .rwe(rwe) 
 )
 
+property lb_msb_bits;
+    @(negedge clk) 
+    ((inst[6:0] == `OPC_LOAD) && (inst[14:12] == `FNC_LB || inst[14:12] == `FNC_LBU)) |-> 
+    (($countones(wb_data[31:8]) == 24 || $countones(wb_data[31:8]) == 0));
+endproperty
+LoadByteExtendedBits: assert property (lb_msb_bits);
+
+property lh_msb_bits;
+    @(negedge clk) 
+    ((inst[6:0] == `OPC_LOAD) && (inst[14:12] == `FNC_LH || inst[14:12] == `FNC_LHU)) |-> 
+    (($countones(wb_data[31:16]) == 16 || $countones(wb_data[31:16]) == 0));
+endproperty
+LoadHalfExtendedBits: assert property (lh_msb_bits);
+
+property store_mask_byte;
+    @(negedge clk)
+    ((inst[6:0] == `OPC_STORE) && (inst[14:12] == `FNC_SB)) |-> $countones(dcache_we) == 1;
+endproperty
+StoreByteWriteMask: assert property(store_mask_byte);
+
+property store_mask_half;
+    @(negedge clk)
+    ((inst[6:0] == `OPC_STORE) && (inst[14:12] == `FNC_SH)) |-> $countones(dcache_we) == 2;
+endproperty
+StoreHalfWriteMask: assert property(store_mask_half);
+
+property store_mask_word;
+    @(negedge clk)
+    ((inst[6:0] == `OPC_STORE) && (inst[14:12] == `FNC_SW)) |-> $countones(dcache_we) == 4;
+endproperty
+StoreWordWriteMask: assert property(store_mask_word);
+    
 
 endmodule

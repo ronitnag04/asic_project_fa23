@@ -47,4 +47,6 @@ always @(posedge clk) begin
     end
 end
 
+assert property (regfile[5'b0] == 32'b0);
+
 endmodule
