@@ -33,11 +33,9 @@ module RegFile (
 );
 
 reg [31:0] regfile [31:1];
-wire [31:0] reg0;
-assign reg0 = 32'b0;
 
-assign rs1d = (rd == 5'b0) ? reg0 : regfile[rs1];
-assign rs2d = (rd == 5'b0) ? reg0 : regfile[rs2];
+assign rs1d = (rs1 == 5'b0) ? 32'b0 : regfile[rs1];
+assign rs2d = (rs2 == 5'b0) ? 32'b0 : regfile[rs2];
 
 always @(posedge clk) begin
     if (reset == 1'b1) begin
@@ -50,6 +48,7 @@ always @(posedge clk) begin
     end
 end
 
-reg0_always_0 : assert property (@(posedge clk) (reg0 == 32'b0));
+reg0_always_0_rs1 : assert property (@(posedge clk) rs1 == 5'b0 |=> rs1d == 32'b0);
+reg0_always_0_rs2 : assert property (@(posedge clk) rs2 == 5'b0 |=> rs2d == 32'b0);
 
 endmodule
