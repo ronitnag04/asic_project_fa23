@@ -46,6 +46,8 @@ simVerilogSrc: &SIM_VERILOG_SRC
   - "src/stage2/JumpTestbench.v"
   - "src/stage3/MWControl.v"
   - "src/stage3/MWControlTestbench.v"
+  - "src/stage1/CSR.v"
+  - "src/stage1/CSRTestbench.v"
   # Add more files here if you need
 
 
@@ -58,7 +60,8 @@ simVerilogSrc: &SIM_VERILOG_SRC
 #tb_name: &TB_NAME "ComparatorTestbench"
 #tb_name: &TB_NAME "OperandsTestbench"
 #tb_name: &TB_NAME "JumpTestbench"
-tb_name: &TB_NAME "MWControlTestbench"
+#tb_name: &TB_NAME "MWControlTestbench"
+tb_name: &TB_NAME "CSRTestbench"
 
 
 # RTL Simulation Variables
