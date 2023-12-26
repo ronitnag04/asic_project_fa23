@@ -48,7 +48,7 @@ always @(posedge clk) begin
     end
 end
 
-reg0_always_0_rs1 : assert property (@(posedge clk) rs1 == 5'b0 |=> rs1d == 32'b0);
-reg0_always_0_rs2 : assert property (@(posedge clk) rs2 == 5'b0 |=> rs2d == 32'b0);
+reg0_always_0_rs1 : assert property (@(posedge clk) rs1 == 5'b0 |-> rs1d == 32'b0);
+reg0_always_0_rs2 : assert property (@(posedge clk) rs2 == 5'b0 |-> rs2d == 32'b0);
 
 endmodule
