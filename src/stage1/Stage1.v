@@ -76,6 +76,7 @@ IMEM IMEM(
     .pc(pc),
     .clk(clk),
     .stall(stall),
+    .reset(reset),
 
     .addr(icache_addr),
     .re(icache_re),

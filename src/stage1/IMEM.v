@@ -9,6 +9,7 @@
 //
 //      clk: Clock line
 //      stall: Stall line
+//      reset: Reset line
 // 
 // Outputs: 
 //    Valid after posedge clk
@@ -23,6 +24,7 @@ module IMEM (
     input [31:0] pc,
     input clk,
     input stall,
+    input reset,
 
     output [31:0] addr,
     output reg re,
@@ -36,9 +38,11 @@ assign addr = pc;
 assign inst = dout;
 
 always @(*) begin
-    if (stall == 1'b0) begin
+    if (reset == 1'b1) begin
+        re <= 1'b0;
+    end else if (stall == 1'b0) begin
         if (clk == 1'b1) re <= 1'b1;
-        else re <= 1'b0';
+        else re <= 1'b0;
     end
 end
 
