@@ -29,7 +29,7 @@ module Stage2 (
 
     output [31:0] alu_out,
     output [31:0] rs2d_clean,
-    output jump,    
+    output jump   
 );
 
 wire sel_rs1d, sel_rs2d, sel_a, sel_b;

@@ -12,7 +12,8 @@
 //      pc: 32-bit Program Counter
 //      jump: jump signal
 //      stall: Stall line
-//      clk: Clock
+//      clk: Clock Line
+//      reset: Reset Line
 //      
 // Outputs:
 //    Valid before posedge clk
@@ -26,8 +27,9 @@
 //
 //      pc_sel: Program Counter select input to Stage 1
 //      rwe: Register Write Enable to Stage 1
+//      csr_we: CSR Write Enable
 
-`include "stage3/Control_MW.vh"
+`include "stage3/MWControl.vh"
 `include "Opcode.vh"
 
 module Stage3 (
@@ -36,7 +38,8 @@ module Stage3 (
     input [31:0] rs2d,          
     input [31:0] inst,          
     input jump,                 
-    input clk,                  
+    input clk,
+    input reset,                  
 
     input stall,                
 
@@ -69,6 +72,7 @@ assign wb_data = (wb_sel == `SEL_PC4) ? pc_4    :
 DMEM DMEM(
     .clk(clk),
     .stall(stall),
+    .reset(reset),
 
     .addr(alu_out),
     .din(rs2d),
@@ -86,7 +90,7 @@ DMEM DMEM(
     .dout(dout) 
 );
 
-Control_MW Control_MW(
+MWControl MWControl(
     .opcode(inst[6:0]),
     .funct3(inst[14:12]),
     .csr(inst[31:20]),
@@ -96,7 +100,7 @@ Control_MW Control_MW(
     .wb_sel(wb_sel),
     .rwe(rwe),
     .csr_we(csr_we) 
-)
+);
 
 property lb_msb_bits;
     @(negedge clk) 

@@ -7,6 +7,7 @@
 //      wb_data_mw:  32-Bit Write Back data from Stage 3/MW
 //      rwe_mw:   Register Write Enable from Stage 3/MW
 //      rd_mw:    5-Bit Write Back register from Stage 3/MW
+//      csr_we: CSR Write Enable
 //
 //    Must be valid after posedge clk
 //      icache_dout: 32-Bit read data from IMEM (Memory151)
@@ -20,14 +21,14 @@
 //    Valid after posedge clk
 //      pc: 32-Bit Program Counter
 //      icache_addr: 32-Bit Instruction Memory Address
-//      icache_re:   Read Enable signal for Instruction Memory  
+//      icache_re:   Read Enable signal for Instruction Memory 
+//      crsd: 32-bit control status register data 
 //  
-//    Valid after posedge clk
+//    Valid after posedge clk + IMEM Access
 //      rs1d: 32-Bit data for rs1
 //      rs2d: 32-Bit data for rs2
 //      imm:  32-Bit immediate 
 //      inst: 32-Bit instruction, filtered by flush conditions
-//      
 
 `include "const.vh"
 
@@ -40,6 +41,7 @@ module Stage1 (
     input [31:0] wb_data_mw,
     input rwe_mw,
     input [4:0] rd_mw,
+    input csr_we,
 
     output [31:0] icache_addr,
     output icache_re,
@@ -53,7 +55,8 @@ module Stage1 (
     output [31:0] rs1d,
     output [31:0] rs2d,
     output [31:0] imm,
-    output [31:0] inst
+    output [31:0] inst,
+    output [31:0] csrd
 );
 
 wire [31:0] inst_in;
@@ -89,8 +92,8 @@ IMEM IMEM(
 RegFile RegFile(
     .rs1(inst_in[19:15]),
     .rs2(inst_in[24:20]),
-    .rd(inst),
-    .wb_data(rd_mw),
+    .rd(rd_mw),
+    .wb_data(wb_data_mw),
     .we(rwe_mw),
     .stall(stall),
     .clk(clk),
@@ -104,6 +107,17 @@ ImmGen ImmGen(
     .inst(inst_in),
 
     .imm(imm)
+);
+
+CSR CSR(
+    .clk(clk),
+    .reset(reset),
+    .stall(stall),
+
+    .csr_we(csr_we),
+    .wb_data(wb_data_mw),
+
+    .csrd(csrd) 
 );
 
 endmodule

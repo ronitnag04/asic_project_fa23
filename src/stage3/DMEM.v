@@ -70,12 +70,12 @@ assign load_half = (addr[1] == 1'b1) ? dcache_dout[31:16]  :
                    (addr[1] == 1'b0) ? dcache_dout[15:0]   :
                    16'bx;
 
-wire [31:0] dout_lb, dout_lbu, dout_lh, dout_lhu, dout_w;
+wire [31:0] dout_lb, dout_lbu, dout_lh, dout_lhu, dout_lw;
 assign dout_lb = {{24{load_byte[7]}}, load_byte};
-assign dout_lbu = {{24{1'b0}, load_byte}};
+assign dout_lbu = {{24{1'b0}}, load_byte};
 assign dout_lh = {{16{load_half[15]}}, load_half};
 assign dout_lhu = {{16{1'b0}}, load_half};
-assign dout_w = dcache_dout;
+assign dout_lw = dcache_dout;
 
 assign dout = (funct3 == `FNC_LB)  ? dout_lb    :
               (funct3 == `FNC_LBU) ? dout_lbu   :
