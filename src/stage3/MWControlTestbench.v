@@ -84,7 +84,7 @@ module MWControlTestbench();
     initial 
     begin
         $vcdpluson;
-        $readmemb("../../tests/stage/MWControltestvectors.input", testvector);
+        $readmemb("../../tests/stage3/MWControltestvectors.input", testvector);
         for (i = 0; i < `NUM_TESTCASES; i = i + 1) begin
             if (^testvector[i] === 1'bx) begin
                 $display("Invalid Test %b", testvector[i]);
