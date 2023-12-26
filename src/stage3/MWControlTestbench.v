@@ -86,7 +86,7 @@ module MWControlTestbench();
         $vcdpluson;
         $readmemb("../../tests/stage3/MWControltestvectors.input", testvector);
         for (i = 0; i < `NUM_TESTCASES; i = i + 1) begin
-            if (|testvector[i] === 1'bx) begin      // 'x' allowed for wb_sel
+            if (|testvector[i] == 1'bx) begin      // 'x' allowed for wb_sel
                 $display("Invalid Test %b", testvector[i]);
                 $vcdplusoff;
                 $finish();
