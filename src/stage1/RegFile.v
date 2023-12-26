@@ -32,7 +32,7 @@ module RegFile (
     output [31:0] rs2d
 );
 
-reg [31:0] modregfile [31:1];
+reg [31:0] regfile [31:1];
 wire [31:0] reg0;
 assign reg0 = 32'b0;
 
