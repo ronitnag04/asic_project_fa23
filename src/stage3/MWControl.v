@@ -29,10 +29,10 @@ module MWControl (
     output csr_we
 );
 
-
 always @(*) begin
     case (opcode) 
         // w_mask
+        `OPC_NOOP,
         `OPC_CSR,
         `OPC_LUI,    
         `OPC_AUIPC,  
@@ -59,6 +59,7 @@ end
 always @(*) begin
     case (opcode) 
         // re
+        `OPC_NOOP,
         `OPC_CSR,
         `OPC_LUI,    
         `OPC_AUIPC,  
@@ -104,6 +105,8 @@ always @(*) begin
         `OPC_JAL,  
         `OPC_JALR       : rwe <= 1'b1;
 
+
+        `OPC_NOOP,
         `OPC_CSR,
         `OPC_BRANCH,
         `OPC_STORE      : rwe <= 1'b0;

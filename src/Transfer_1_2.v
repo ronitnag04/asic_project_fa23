@@ -45,7 +45,7 @@ always @(negedge clk) begin
         rs1d_out <= 32'b0;
         rs2d_out <= 32'b0;
         imm_out <= 32'b0;
-        inst_out <= { {25{1'b0}}, `INSTR_NOP};
+        inst_out <= `INSTR_NOP;
     end else if (stall == 1'b0) begin
         pc_out <= pc_in;
         rs1d_out <= rs1d_in;

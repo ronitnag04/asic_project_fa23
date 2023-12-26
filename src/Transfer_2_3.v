@@ -44,7 +44,7 @@ always @(negedge clk) begin
         alu_out_out <= 32'b0;
         rs2d_out <= 32'b0;
         jump_out <= 1'b0;
-        inst_out <= { {25{1'b0}}, `INSTR_NOP};
+        inst_out <= `INSTR_NOP;
     end else if (stall == 1'b0) begin
         pc_out <= pc_in;
         alu_out_out <= alu_out_in;
