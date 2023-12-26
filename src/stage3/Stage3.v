@@ -49,7 +49,8 @@ module Stage3 (
 
     output [31:0] wb_data,      
     output pc_sel,              
-    output rwe,                 
+    output rwe,
+    output csr_we                 
 );
 
 assign pc_sel = jump;       // Select next PC to by ALU if jump signal is 1
@@ -88,11 +89,13 @@ DMEM DMEM(
 Control_MW Control_MW(
     .opcode(inst[6:0]),
     .funct3(inst[14:12]),
+    .csr(inst[31:20]),
 
     .w_mask(w_mask),
     .re(re),
     .wb_sel(wb_sel),
-    .rwe(rwe) 
+    .rwe(rwe),
+    .csr_we(csr_we) 
 )
 
 property lb_msb_bits;
