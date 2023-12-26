@@ -8,7 +8,7 @@
 //      w_mask: 4-Bit write mask for data memory
 //      re: Read Enable for data memory
 //      wb_sel: 2-Bit Write Back select         
-//              NOTE: Default is ALU for Branch/Store, but doesn't matter since rwe is 0
+//              NOTE: Default is 2'bxx for Branch/Store, but doesn't matter since rwe is 0
 //      rwe: Register Write Enable
 
 `include "Opcode.vh"
@@ -81,7 +81,7 @@ always @(*) begin
         `OPC_JAL,  
         `OPC_JALR       : wb_sel <= `SEL_PC4; 
 
-        default : wb_sel <= `SEL_ALU;
+        default : wb_sel <= 2'bxx;
     endcase
 end    
 
