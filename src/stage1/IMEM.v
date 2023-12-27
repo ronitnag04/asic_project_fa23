@@ -27,7 +27,7 @@ module IMEM (
     input reset,
 
     output [31:0] addr,
-    output reg re,
+    output re,
 
     input [31:0] dout,
     
@@ -36,14 +36,6 @@ module IMEM (
 
 assign addr = pc;
 assign inst = dout;
-
-always @(*) begin
-    if (reset == 1'b1) begin
-        re <= 1'b0;
-    end else if (stall == 1'b0) begin
-        if (clk == 1'b1) re <= 1'b1;
-        else re <= 1'b0;
-    end
-end
+assign re = 1'b1;
 
 endmodule
