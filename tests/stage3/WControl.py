@@ -33,8 +33,6 @@ SEL_MEM  = '00'
 SEL_ALU  = '01'
 SEL_PC4  = '10'
 
-CSR_TOHOST = 0x51E
-
 opcodes = [OPC_NOOP, OPC_LUI, OPC_AUIPC, OPC_JAL, OPC_JALR, OPC_BRANCH, OPC_STORE, OPC_LOAD, OPC_ARI_RTYPE, OPC_ARI_ITYPE, OPC_CSR]
 store_fncs = [FNC_SB, FNC_SH, FNC_SW]
 csr_fncs = [FNC_RW, FNC_RWI]
@@ -49,8 +47,7 @@ def random_inputs():
     if random.randint(0, 99) < 90:
         opcode = opcodes[random.randint(0, len(opcodes)-1)]
     funct3 = random.randint(0, 0b111)
-    csr = random.randint(0, 0xfff)
-    return opcode, funct3, csr
+    return opcode, funct3
 
 def wb_sel(opcode):
     if opcode in [OPC_LUI, OPC_AUIPC, OPC_ARI_ITYPE, OPC_ARI_RTYPE, OPC_CSR]:
@@ -62,9 +59,9 @@ def wb_sel(opcode):
     return 'xx'
 
 
-def gen_vector(opcode, funct3, csr):
-    # [6:0] opcode, [9:7] funct3, [21:10] csr
-    # [25:22] REF_w_mask, [26] REF_re, [28:27] REF_wb_sel, [29] REF_rwe
+def gen_vector(opcode, funct3):
+    # [6:0] opcode, [9:7] funct3
+    # [11:10] REF_wb_sel, [12] REF_rwe, [13] REF_csr_we
     global testcases
     testcases += 1
 
@@ -76,9 +73,9 @@ def gen_vector(opcode, funct3, csr):
                                 OPC_JAL, 
                                 OPC_JALR, 
                                 OPC_LOAD] else '0'
-    REF_csr_we = '1' if opcode == OPC_CSR and funct3 in [FNC_RW, FNC_RWI] and csr == CSR_TOHOST else '0'
+    REF_csr_we = '1' if opcode == OPC_CSR and funct3 in [FNC_RW, FNC_RWI] else '0'
 
-    return ''.join([bin(opcode, 7), bin(funct3, 3), bin(csr, 12), 
+    return ''.join([bin(opcode, 7), bin(funct3, 3), 
                     REF_wb_sel, REF_rwe, REF_csr_we][::-1])
 
 random_tests = 100
@@ -92,16 +89,13 @@ for i in range(random_tests):
 for opcode in opcodes:
     if opcode == OPC_STORE:
         for funct3 in store_fncs:
-            _, _, csr = random_inputs()
-            file.write(gen_vector(opcode, funct3, csr) + '\n')
+            file.write(gen_vector(opcode, funct3) + '\n')
     elif opcode == OPC_CSR:
         for funct3 in csr_fncs:
-            file.write(gen_vector(opcode, funct3, CSR_TOHOST) + '\n')
-            _, _, csr = random_inputs()
-            file.write(gen_vector(opcode, funct3, csr) + '\n')
+            file.write(gen_vector(opcode, funct3) + '\n')
     else:
         for _ in range(10):
-            _, funct3, csr = random_inputs()
-            file.write(gen_vector(opcode, funct3, csr) + '\n')
+            _, funct3= random_inputs()
+            file.write(gen_vector(opcode, funct3) + '\n')
 
 print(f'Total number of testcases: {testcases}')

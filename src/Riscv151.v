@@ -37,6 +37,7 @@ Stage1 Stage1(
     .wb_data_w(wb_data_w),
     .rwe_w(rwe_w),
     .rd_w(inst_w[11:7]),
+    .csr_i_w(inst_w[31:20]),
     .csr_we(csr_we),
 
     .icache_addr(icache_addr),

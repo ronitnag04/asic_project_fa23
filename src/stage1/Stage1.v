@@ -41,6 +41,7 @@ module Stage1 (
     input [31:0] wb_data_w,
     input rwe_w,
     input [4:0] rd_w,
+    input [11:0] csr_i_w,
     input csr_we,
 
     output [31:0] icache_addr,
@@ -114,6 +115,7 @@ CSR CSR(
     .reset(reset),
     .stall(stall),
 
+    .csr_i(csr_i_w),
     .csr_we(csr_we),
     .wb_data(wb_data_w),
 

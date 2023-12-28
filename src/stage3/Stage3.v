@@ -46,7 +46,6 @@ assign wb_data = (wb_sel == `SEL_PC4) ? pc_4    :
 WControl WControl(
     .opcode(inst[6:0]),
     .funct3(inst[14:12]),
-    .csr(inst[31:20]),
 
     .wb_sel(wb_sel),
     .rwe(rwe),

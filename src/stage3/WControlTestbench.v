@@ -5,8 +5,8 @@
 
 `timescale 1ns / 1ps
 `define PROP_DELAY (`CLOCK_PERIOD / 5.0)
-`define NUM_TESTCASES 197
-`define SIZE_TESTVECTOR 26
+`define NUM_TESTCASES 195
+`define SIZE_TESTVECTOR 14
 
 module WControlTestbench();
     reg clk;
@@ -19,7 +19,6 @@ module WControlTestbench();
     // Inputs
     wire [6:0] opcode;
     wire [2:0] funct3;
-    wire [11:0] csr;
 
     // REF Outputs
     wire [1:0] REF_wb_sel;
@@ -59,7 +58,6 @@ module WControlTestbench();
     WControl DUT1(
         .opcode(opcode),
         .funct3(funct3),
-        .csr(csr),
 
         .wb_sel(DUT_wb_sel),
         .rwe(DUT_rwe),
@@ -67,16 +65,15 @@ module WControlTestbench();
     );
 
     reg [`SIZE_TESTVECTOR-1:0] testvector [0:`NUM_TESTCASES-1];
-    // [6:0] opcode, [9:7] funct3, [21:10] csr
-    // [23:22] REF_wb_sel, [24] REF_rwe, [25] REF_csr_we
+    // [6:0] opcode, [9:7] funct3
+    // [11:10] REF_wb_sel, [12] REF_rwe, [13] REF_csr_we
 
     reg [`SIZE_TESTVECTOR-1:0] cur_testvector;
     assign opcode = cur_testvector[6:0];
     assign funct3 = cur_testvector[9:7];
-    assign csr = cur_testvector[21:10];
-    assign REF_wb_sel = cur_testvector[23:22];
-    assign REF_rwe = cur_testvector[24];
-    assign REF_csr_we = cur_testvector[25];
+    assign REF_wb_sel = cur_testvector[11:10];
+    assign REF_rwe = cur_testvector[12];
+    assign REF_csr_we = cur_testvector[13];
 
     integer i; // integer used for looping in non-generate statement
 
