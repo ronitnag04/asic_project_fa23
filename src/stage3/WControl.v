@@ -1,5 +1,5 @@
-// Module: MWControl.v
-// Desc: Control for Stage 3/MW
+// Module: WControl.v
+// Desc: Control for Stage 3/W
 // Inputs: 
 //      opcode: 7-Bit opcode from instruction
 //      funct3: 3-Bit function code from instruction
@@ -15,9 +15,9 @@
 
 `include "Opcode.vh"
 `include "const.vh"
-`include "stage3/MWControl.vh"
+`include "stage3/WControl.vh"
 
-module MWControl (
+module WControl (
     input [6:0] opcode,
     input [2:0] funct3,
     input [11:0] csr,

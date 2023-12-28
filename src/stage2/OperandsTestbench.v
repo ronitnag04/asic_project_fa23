@@ -21,8 +21,8 @@ module OperandsTestbench();
     wire [6:0] opcode;
     wire [4:0] rs1, rs2;
 
-    wire [4:0] rd_mw; 
-    wire rwe_mw;
+    wire [4:0] rd_w; 
+    wire rwe_w;
 
     // REF Outputs
     wire REF_sel_rs1d, REF_sel_rs2d, REF_sel_a, REF_sel_b;
@@ -32,7 +32,7 @@ module OperandsTestbench();
 
     // Task for checking output
     task displayValues;
-        $display("\trs1: %d, rs2: %d, rd_mw: %d, rwe_mw: %d", rs1, rs2, rd_mw, rwe_mw);
+        $display("\trs1: %d, rs2: %d, rd_w: %d, rwe_w: %d", rs1, rs2, rd_w, rwe_w);
         $display("\tDUT_sel_rs1d: 0b%b, REF_sel_rs1d: 0b%b", DUT_sel_rs1d, REF_sel_rs1d);
         $display("\tDUT_sel_rs2d: 0b%b, REF_sel_rs2d: 0b%b", DUT_sel_rs2d, REF_sel_rs2d);
         $display("\tDUT_sel_a: 0b%b, REF_sel_a: 0b%b", DUT_sel_a, REF_sel_a);
@@ -62,8 +62,8 @@ module OperandsTestbench();
         .rs1(rs1),
         .rs2(rs2),
 
-        .rd_mw(rd_mw),  
-        .rwe_mw(rwe_mw),
+        .rd_w(rd_w),  
+        .rwe_w(rwe_w),
     
         .sel_rs1d(DUT_sel_rs1d),
         .sel_rs2d(DUT_sel_rs2d),
@@ -74,7 +74,7 @@ module OperandsTestbench();
     reg [`SIZE_TESTVECTOR-1:0] testvector [0:`NUM_TESTCASES-1];
     
     // [6:0] opcode, [11:7] rs1, [16:12] rs2
-    // [21:17] rd_mw, [22] rwe_mw
+    // [21:17] rd_w, [22] rwe_w
     // [23] REF_sel_rs1d, [24] REF_sel_rs2d
     // [25] REF_sel_a, [26] REF_sel_b
 
@@ -82,8 +82,8 @@ module OperandsTestbench();
     assign opcode =       cur_testvector[6:0];
     assign rs1 =          cur_testvector[11:7];
     assign rs2 =          cur_testvector[16:12];
-    assign rd_mw =        cur_testvector[21:17];
-    assign rwe_mw =       cur_testvector[22];
+    assign rd_w =        cur_testvector[21:17];
+    assign rwe_w =       cur_testvector[22];
     assign REF_sel_rs1d = cur_testvector[23];
     assign REF_sel_rs2d = cur_testvector[24];
     assign REF_sel_a    = cur_testvector[25];

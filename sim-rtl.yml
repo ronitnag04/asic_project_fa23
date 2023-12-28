@@ -52,13 +52,13 @@ simVerilogSrc: &SIM_VERILOG_SRC
   - "src/stage2/OperandsTestbench.v"
   - "src/stage2/Stage2.v"
   - "src/Transfer_2_3.v"
-  - "src/stage3/MWControl.v"
-  - "src/stage3/MWControlTestbench.v"
+  - "src/stage3/WControl.v"
+  - "src/stage3/WControlTestbench.v"
   - "src/stage3/Stage3.v"
   # Add more files here if you need
 
 
-tb_name: &TB_NAME "rocketTestHarness"
+#tb_name: &TB_NAME "rocketTestHarness"
 #tb_name: &TB_NAME "ALUTestbench"
 #tb_name: &TB_NAME "ALUTestVectorTestbench"
 #tb_name: &TB_NAME "PCTestbench"
@@ -67,7 +67,7 @@ tb_name: &TB_NAME "rocketTestHarness"
 #tb_name: &TB_NAME "ComparatorTestbench"
 #tb_name: &TB_NAME "OperandsTestbench"
 #tb_name: &TB_NAME "JumpTestbench"
-#tb_name: &TB_NAME "MWControlTestbench"
+tb_name: &TB_NAME "WControlTestbench"
 #tb_name: &TB_NAME "CSRTestbench"
 
 

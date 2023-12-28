@@ -40,7 +40,7 @@ store_fncs = [FNC_SB, FNC_SH, FNC_SW]
 csr_fncs = [FNC_RW, FNC_RWI]
 
 random.seed(os.urandom(32))
-file = open('tests/stage3/MWControltestvectors.input', 'w')
+file = open('tests/stage3/WControltestvectors.input', 'w')
 
 testcases = 0
 

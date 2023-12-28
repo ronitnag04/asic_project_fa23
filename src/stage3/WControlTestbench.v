@@ -1,14 +1,14 @@
-//  Module: MWControlTestbench
-//  Desc:   Testbench for MWControl
+//  Module: WControlTestbench
+//  Desc:   Testbench for WControl
 //  Duts:
-//      1)  MWControl
+//      1)  WControl
 
 `timescale 1ns / 1ps
 `define PROP_DELAY (`CLOCK_PERIOD / 5.0)
 `define NUM_TESTCASES 197
 `define SIZE_TESTVECTOR 26
 
-module MWControlTestbench();
+module WControlTestbench();
     reg clk;
 
     // Clock Signal generation:
@@ -56,7 +56,7 @@ module MWControlTestbench();
 
     // This is where the modules being tested are instantiated. 
 
-    MWControl DUT1(
+    WControl DUT1(
         .opcode(opcode),
         .funct3(funct3),
         .csr(csr),
@@ -83,7 +83,7 @@ module MWControlTestbench();
     initial 
     begin
         $vcdpluson;
-        $readmemb("../../tests/stage3/MWControltestvectors.input", testvector);
+        $readmemb("../../tests/stage3/WControltestvectors.input", testvector);
         for (i = 0; i < `NUM_TESTCASES; i = i + 1) begin
             if (testvector[i] == {`SIZE_TESTVECTOR{1'bx}}) begin      // 'x' allowed for wb_sel
                 $display("Invalid Test %b", testvector[i]);

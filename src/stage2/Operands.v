@@ -4,8 +4,8 @@
 //      opcode: 7-bit opcode from instruction
 //      rs1: 5-bit register 1 index from instruction
 //      rs2: 5-bit register 2 index from instruction
-//      rd_mw: 5-bit Destination register for Stage 3/MW
-//      rwe_mw: Register Write enable for Stage 3/MW
+//      rd_w: 5-bit Destination register for Stage 3/W
+//      rwe_w: Register Write enable for Stage 3/W
 // 
 // Outputs:
 //      sel_rs1d: 1(wb_data), 0(rs1d) 
@@ -20,8 +20,8 @@ module Operands (
     input [4:0] rs1,
     input [4:0] rs2,
 
-    input [4:0] rd_mw,  
-    input rwe_mw,
+    input [4:0] rd_w,  
+    input rwe_w,
     
     output sel_rs1d,
     output sel_rs2d,
@@ -29,8 +29,8 @@ module Operands (
     output reg sel_b
 );
 
-assign sel_rs1d = ((rd_mw == rs1) && (rwe_mw == 1'b1) && (rd_mw != 5'b0)) ? 1'b1 : 1'b0;
-assign sel_rs2d = ((rd_mw == rs2) && (rwe_mw == 1'b1) && (rd_mw != 5'b0)) ? 1'b1 : 1'b0;
+assign sel_rs1d = ((rd_w == rs1) && (rwe_w == 1'b1) && (rd_w != 5'b0)) ? 1'b1 : 1'b0;
+assign sel_rs2d = ((rd_w == rs2) && (rwe_w == 1'b1) && (rd_w != 5'b0)) ? 1'b1 : 1'b0;
 
 
 always @(*) begin

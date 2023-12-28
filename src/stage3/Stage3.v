@@ -15,7 +15,7 @@
 //      rwe: Register Write Enable to Stage 1
 //      csr_we: CSR Write Enable
 
-`include "stage3/MWControl.vh"
+`include "stage3/WControl.vh"
 `include "Opcode.vh"
 
 module Stage3 (
@@ -43,7 +43,7 @@ assign wb_data = (wb_sel == `SEL_PC4) ? pc_4    :
                  32'bx;
 
 
-MWControl MWControl(
+WControl WControl(
     .opcode(inst[6:0]),
     .funct3(inst[14:12]),
     .csr(inst[31:20]),

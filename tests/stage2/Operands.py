@@ -25,9 +25,9 @@ opcodes = {                        #[Asel, Bsel]
 }
 
 
-def gen_vector(OPC, rs1, rs2, rd_mw, rwe_mw):
+def gen_vector(OPC, rs1, rs2, rd_w, rwe_w):
     # [6:0] opcode, [11:7] rs1, [16:12] rs2
-    # [21:17] rd_mw, [22] rwe_mw
+    # [21:17] rd_w, [22] rwe_w
     # [23] REF_sel_rs1d, [24] REF_sel_rs2d
     # [25] REF_sel_a, [26] REF_sel_b
     global testcases
@@ -38,15 +38,15 @@ def gen_vector(OPC, rs1, rs2, rd_mw, rwe_mw):
     REF_sel_b = opcodes[OPC][1][1]
 
     REF_sel_rs1d = 0
-    if (rd_mw == rs1 and rd_mw != 0 and rwe_mw == 1):
+    if (rd_w == rs1 and rd_w != 0 and rwe_w == 1):
         REF_sel_rs1d = 1
 
     REF_sel_rs2d = 0
-    if (rd_mw == rs2 and rd_mw != 0 and rwe_mw == 1):
+    if (rd_w == rs2 and rd_w != 0 and rwe_w == 1):
         REF_sel_rs2d = 1
 
     return ''.join([opcode, bin(rs1, 5), bin(rs2, 5),
-                    bin(rd_mw, 5), bin(rwe_mw, 1), 
+                    bin(rd_w, 5), bin(rwe_w, 1), 
                     bin(REF_sel_rs1d, 1), bin(REF_sel_rs2d, 1),
                     bin(REF_sel_a, 1), bin(REF_sel_b, 1)][::-1])
 

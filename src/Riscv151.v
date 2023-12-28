@@ -18,25 +18,25 @@ module Riscv151(
 
 );
 
-wire [31:0] alu_out_mw, wb_data_mw;
-wire pc_sel_mw, rwe_mw, csr_we;
-wire [31:0] inst_mw;
+wire [31:0] alu_out_w, wb_data_w;
+wire pc_sel_w, rwe_w, csr_we;
+wire [31:0] inst_w;
 wire [31:0] pc_i, rs1d_i, rs2d_i, imm_i, inst_i;
 wire [31:0] pc_x, rs1d_x, rs2d_x, imm_x, inst_x;
 wire [31:0] alu_out_x, dout_x;
 wire jump_x; 
-wire [31:0] pc_mw, dout_mw;
-wire jump_mw;
+wire [31:0] pc_w, dout_w;
+wire jump_w;
 
 Stage1 Stage1(
     .clk(clk),
     .reset(reset),
 
-    .alu_out_mw(alu_out_mw),
-    .pc_sel_mw(pc_sel_mw),
-    .wb_data_mw(wb_data_mw),
-    .rwe_mw(rwe_mw),
-    .rd_mw(inst_mw[11:7]),
+    .alu_out_w(alu_out_w),
+    .pc_sel_w(pc_sel_w),
+    .wb_data_w(wb_data_w),
+    .rwe_w(rwe_w),
+    .rd_w(inst_w[11:7]),
     .csr_we(csr_we),
 
     .icache_addr(icache_addr),
@@ -84,9 +84,9 @@ Stage2 Stage2(
     .imm(imm_x),
     .inst(inst_x),
 
-    .wb_data_mw(wb_data_mw),
-    .rwe_mw(rwe_mw),
-    .rd_mw(inst_mw[11:7]),
+    .wb_data_w(wb_data_w),
+    .rwe_w(rwe_w),
+    .rd_w(inst_w[11:7]),
 
     .alu_out(alu_out_x),
     .jump(jump_x),                
@@ -112,23 +112,23 @@ Transfer_2_3 Transfer_2_3(
     .jump_in(jump_x),
     .inst_in(inst_x),
 
-    .pc_out(pc_mw),
-    .alu_out_out(alu_out_mw),
-    .dout_out(dout_mw),
-    .jump_out(jump_mw),
-    .inst_out(inst_mw)
+    .pc_out(pc_w),
+    .alu_out_out(alu_out_w),
+    .dout_out(dout_w),
+    .jump_out(jump_w),
+    .inst_out(inst_w)
 );
 
 Stage3 Stage3(
-    .pc(pc_mw),            
-    .alu_out(alu_out_mw),       
-    .dout(dout_mw),          
-    .inst(inst_mw),          
-    .jump(jump_mw), 
+    .pc(pc_w),            
+    .alu_out(alu_out_w),       
+    .dout(dout_w),          
+    .inst(inst_w),          
+    .jump(jump_w), 
 
-    .wb_data(wb_data_mw),      
-    .pc_sel(pc_sel_mw),              
-    .rwe(rwe_mw),
+    .wb_data(wb_data_w),      
+    .pc_sel(pc_sel_w),              
+    .rwe(rwe_w),
     .csr_we(csr_we)  
 );
 

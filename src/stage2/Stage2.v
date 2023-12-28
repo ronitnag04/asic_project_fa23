@@ -11,9 +11,9 @@
 //      imm: 32-Bit immediate from Transfer_1_2
 //      inst: 32-Bit instruction from Transfer_1_2
 // 
-//      wb_data_mw: 32-Bit Writeback data from Stage 3/MW
-//      rwe_mw: Register Write Enable from Stage 3/MW
-//      rd_mw: Register Destination index from Stage 3/MW 
+//      wb_data_w: 32-Bit Writeback data from Stage 3/W
+//      rwe_w: Register Write Enable from Stage 3/W
+//      rd_w: Register Destination index from Stage 3/W 
 //  
 //    Must be valid after posedge clk
 //      dcache_dout: 32-bit data memory data
@@ -43,9 +43,9 @@ module Stage2 (
     input [31:0] imm,
     input [31:0] inst,
 
-    input [31:0] wb_data_mw,
-    input rwe_mw,
-    input [4:0] rd_mw,
+    input [31:0] wb_data_w,
+    input rwe_w,
+    input [4:0] rd_w,
 
     output [31:0] alu_out,
     output jump,   
@@ -67,8 +67,8 @@ Operands Operands(
     .rs1(inst[19:15]),
     .rs2(inst[24:20]),
 
-    .rd_mw(rd_mw),  
-    .rwe_mw(rwe_mw),
+    .rd_w(rd_w),  
+    .rwe_w(rwe_w),
     
     .sel_rs1d(sel_rs1d),
     .sel_rs2d(sel_rs2d),
@@ -77,8 +77,8 @@ Operands Operands(
 );
 
 wire [31:0] rs1d_clean, rs2d_clean, A, B;
-assign rs1d_clean = (sel_rs1d == 1'b1) ? wb_data_mw : rs1d;
-assign rs2d_clean = (sel_rs2d == 1'b1) ? wb_data_mw : rs2d;
+assign rs1d_clean = (sel_rs1d == 1'b1) ? wb_data_w : rs1d;
+assign rs2d_clean = (sel_rs2d == 1'b1) ? wb_data_w : rs2d;
 assign A = (sel_a == 1'b1) ? pc : rs1d_clean;
 assign B = (sel_b == 1'b1) ? imm : rs2d_clean;
 
