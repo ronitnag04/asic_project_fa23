@@ -23,9 +23,9 @@ wire pc_sel_mw, rwe_mw, csr_we;
 wire [31:0] inst_mw;
 wire [31:0] pc_i, rs1d_i, rs2d_i, imm_i, inst_i;
 wire [31:0] pc_x, rs1d_x, rs2d_x, imm_x, inst_x;
-wire [31:0] alu_out_x, rs2d_clean_x;
+wire [31:0] alu_out_x, dout_x;
 wire jump_x; 
-wire [31:0] pc_mw, rs2d_clean_mw;
+wire [31:0] pc_mw, dout_mw;
 wire jump_mw;
 
 Stage1 Stage1(
@@ -74,6 +74,10 @@ Transfer_1_2 Transfer_1_2(
 );
 
 Stage2 Stage2(
+    .clk(clk),
+    .reset(reset),
+    .stall(stall),
+
     .pc(pc_x),
     .rs1d(rs1d_x),
     .rs2d(rs2d_x),
@@ -85,8 +89,16 @@ Stage2 Stage2(
     .rd_mw(inst_mw[11:7]),
 
     .alu_out(alu_out_x),
-    .rs2d_clean(rs2d_clean_x),
-    .jump(jump_x) 
+    .jump(jump_x),                
+
+    .dcache_addr(dcache_addr),  
+    .dcache_we(dcache_we),     
+    .dcache_re(dcache_re),           
+    .dcache_din(dcache_din),       
+
+    .dcache_dout(dcache_dout),   
+
+    .dout(dout_x)
 );
 
 Transfer_2_3 Transfer_2_3(
@@ -96,13 +108,13 @@ Transfer_2_3 Transfer_2_3(
 
     .pc_in(pc_x),
     .alu_out_in(alu_out_x),
-    .rs2d_in(rs2d_clean_x),
+    .dout_in(dout_x),
     .jump_in(jump_x),
     .inst_in(inst_x),
 
     .pc_out(pc_mw),
     .alu_out_out(alu_out_mw),
-    .rs2d_out(rs2d_clean_mw),
+    .dout_out(dout_mw),
     .jump_out(jump_mw),
     .inst_out(inst_mw)
 );
@@ -110,20 +122,9 @@ Transfer_2_3 Transfer_2_3(
 Stage3 Stage3(
     .pc(pc_mw),            
     .alu_out(alu_out_mw),       
-    .rs2d(rs2d_clean_mw),          
+    .dout(dout_mw),          
     .inst(inst_mw),          
-    .jump(jump_mw),                 
-    .clk(clk),
-    .reset(reset),                  
-
-    .stall(stall),                
-
-    .dcache_addr(dcache_addr),  
-    .dcache_we(dcache_we),     
-    .dcache_re(dcache_re),           
-    .dcache_din(dcache_din),       
-
-    .dcache_dout(dcache_dout),   
+    .jump(jump_mw), 
 
     .wb_data(wb_data_mw),      
     .pc_sel(pc_sel_mw),              
