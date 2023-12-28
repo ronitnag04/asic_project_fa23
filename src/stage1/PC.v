@@ -23,11 +23,15 @@ module PC (
     output reg [31:0] pc_out
 );
 
+wire [31:0] next_pc;
+assign next_pc = (reset == 1'b1)  ? `PC_RESET  :
+                 (stall == 1'b1)  ? pc_out     :
+                 (pc_sel == 1'b0) ? pc_out + 4 :
+                 (pc_sel == 1'b1) ? alu_out    :
+                 32'bx; 
 
 always @(posedge clk) begin
-    if (reset) pc_out <= `PC_RESET;
-    else if (stall) pc_out <= pc_out;
-    else pc_out <= (pc_sel == 1'b0) ? pc_out + 4 : alu_out;
+    pc_out <= next_pc;
 end
 
 pc_reset: assert property (@(posedge clk) reset |=> (pc_out == `PC_RESET));

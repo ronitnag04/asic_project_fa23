@@ -39,6 +39,9 @@ module Transfer_1_2 (
     output reg [31:0] inst_out
 );
 
+reg [31:0] pc_read;
+always @(posedge clk) pc_read <= pc_in;
+
 always @(negedge clk) begin
     if (reset == 1'b1) begin
         pc_out <= 32'b0;
@@ -47,7 +50,7 @@ always @(negedge clk) begin
         imm_out <= 32'b0;
         inst_out <= `INSTR_NOP;
     end else if (stall == 1'b0) begin
-        pc_out <= pc_in;
+        pc_out <= pc_read;
         rs1d_out <= rs1d_in;
         rs2d_out <= rs2d_in;
         imm_out <= imm_in;
