@@ -22,59 +22,10 @@ module MWControl (
     input [2:0] funct3,
     input [11:0] csr,
 
-    output reg [3:0] w_mask,
-    output reg re,
     output reg [1:0] wb_sel,
     output reg rwe,
     output csr_we
 );
-
-always @(*) begin
-    case (opcode) 
-        // w_mask
-        `OPC_NOOP,
-        `OPC_CSR,
-        `OPC_LUI,    
-        `OPC_AUIPC,  
-        `OPC_JAL,    
-        `OPC_JALR,   
-        `OPC_BRANCH,  
-        `OPC_LOAD,  
-        `OPC_ARI_ITYPE, 
-        `OPC_ARI_RTYPE : w_mask <= 4'b0;
-        
-        `OPC_STORE : begin
-            case (funct3)
-                `FNC_SB : w_mask <= 4'b0001;
-                `FNC_SH : w_mask <= 4'b0011;
-                `FNC_SW : w_mask <= 4'b1111;
-                default : w_mask <= 4'b0000;
-            endcase
-        end
-
-        default : w_mask <= 4'b0000;
-    endcase
-end
-
-always @(*) begin
-    case (opcode) 
-        // re
-        `OPC_NOOP,
-        `OPC_CSR,
-        `OPC_LUI,    
-        `OPC_AUIPC,  
-        `OPC_JAL,    
-        `OPC_JALR,   
-        `OPC_BRANCH,
-        `OPC_STORE,   
-        `OPC_ARI_RTYPE,  
-        `OPC_ARI_ITYPE : re <= 1'b0;
-        
-        `OPC_LOAD : re <= 1'b1;
-
-        default : re <= 1'b0;
-    endcase
-end
 
 always @(*) begin
     case (opcode)

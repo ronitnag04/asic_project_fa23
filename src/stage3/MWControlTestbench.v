@@ -6,7 +6,7 @@
 `timescale 1ns / 1ps
 `define PROP_DELAY (`CLOCK_PERIOD / 5.0)
 `define NUM_TESTCASES 197
-`define SIZE_TESTVECTOR 31
+`define SIZE_TESTVECTOR 26
 
 module MWControlTestbench();
     reg clk;
@@ -22,15 +22,11 @@ module MWControlTestbench();
     wire [11:0] csr;
 
     // REF Outputs
-    wire [3:0] REF_w_mask;
-    wire REF_re;
     wire [1:0] REF_wb_sel;
     wire REF_rwe;
     wire REF_csr_we;
 
     // DUT Outputs
-    wire [3:0] DUT_w_mask;
-    wire DUT_re;
     wire [1:0] DUT_wb_sel;
     wire DUT_rwe;
     wire DUT_csr_we;
@@ -38,7 +34,6 @@ module MWControlTestbench();
     // Task for checking output
     task displayValues;
         $display("\topcode: 0b%b, funct3: 0b%b", opcode, funct3);
-        $display("\tDUT_w_mask: %b, REF_w_mask: %b, DUT_re: %b, REF_re: %b", DUT_w_mask, REF_w_mask, DUT_re, REF_re);
         $display("\tDUT_wb_sel: %b, REF_wb_sel: %b, DUT_rwe: %b, REF_rwe: %b", DUT_wb_sel, REF_wb_sel, DUT_rwe, REF_rwe);
         $display("\tDUT_csr_we: %b, REF_csr_we: %b", DUT_csr_we, REF_csr_we);
     endtask
@@ -47,8 +42,7 @@ module MWControlTestbench();
         input integer test_num;
 
         $display("Test %0d", test_num);
-        if (  (REF_w_mask != DUT_w_mask) || (REF_re != DUT_re)  ||
-              (REF_wb_sel !== DUT_wb_sel) || (REF_rwe != DUT_rwe) ||
+        if (  (REF_wb_sel !== DUT_wb_sel) || (REF_rwe != DUT_rwe) ||
               (REF_csr_we != DUT_csr_we)) begin 
             $display("FAIL: Incorrect result");
             displayValues();
@@ -67,8 +61,6 @@ module MWControlTestbench();
         .funct3(funct3),
         .csr(csr),
 
-        .w_mask(DUT_w_mask),
-        .re(DUT_re),
         .wb_sel(DUT_wb_sel),
         .rwe(DUT_rwe),
         .csr_we(DUT_csr_we)
@@ -76,17 +68,15 @@ module MWControlTestbench();
 
     reg [`SIZE_TESTVECTOR-1:0] testvector [0:`NUM_TESTCASES-1];
     // [6:0] opcode, [9:7] funct3, [21:10] csr
-    // [25:22] REF_w_mask, [26] REF_re, [28:27] REF_wb_sel, [29] REF_rwe, [30] REF_csr_we
+    // [23:22] REF_wb_sel, [24] REF_rwe, [25] REF_csr_we
 
     reg [`SIZE_TESTVECTOR-1:0] cur_testvector;
     assign opcode = cur_testvector[6:0];
     assign funct3 = cur_testvector[9:7];
     assign csr = cur_testvector[21:10];
-    assign REF_w_mask = cur_testvector[25:22];
-    assign REF_re = cur_testvector[26];
-    assign REF_wb_sel = cur_testvector[28:27];
-    assign REF_rwe = cur_testvector[29];
-    assign REF_csr_we = cur_testvector[30];
+    assign REF_wb_sel = cur_testvector[23:22];
+    assign REF_rwe = cur_testvector[24];
+    assign REF_csr_we = cur_testvector[25];
 
     integer i; // integer used for looping in non-generate statement
 

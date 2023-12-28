@@ -52,17 +52,6 @@ def random_inputs():
     csr = random.randint(0, 0xfff)
     return opcode, funct3, csr
 
-def w_mask(opcode, funct3):
-    if opcode != OPC_STORE:
-        return '0000'
-    if funct3 == FNC_SB:
-        return '0001'
-    if funct3 == FNC_SH:
-        return '0011'
-    if funct3 == FNC_SW:
-        return '1111'
-    return '0000'
-
 def wb_sel(opcode):
     if opcode in [OPC_LUI, OPC_AUIPC, OPC_ARI_ITYPE, OPC_ARI_RTYPE, OPC_CSR]:
         return SEL_ALU
@@ -79,8 +68,6 @@ def gen_vector(opcode, funct3, csr):
     global testcases
     testcases += 1
 
-    REF_w_mask = w_mask(opcode, funct3)
-    REF_re = '1' if opcode == OPC_LOAD else '0'
     REF_wb_sel = wb_sel(opcode)
     REF_rwe = '1' if opcode in [OPC_LUI, 
                                 OPC_AUIPC, 
@@ -92,7 +79,7 @@ def gen_vector(opcode, funct3, csr):
     REF_csr_we = '1' if opcode == OPC_CSR and funct3 in [FNC_RW, FNC_RWI] and csr == CSR_TOHOST else '0'
 
     return ''.join([bin(opcode, 7), bin(funct3, 3), bin(csr, 12), 
-                    REF_w_mask, REF_re, REF_wb_sel, REF_rwe, REF_csr_we][::-1])
+                    REF_wb_sel, REF_rwe, REF_csr_we][::-1])
 
 random_tests = 100
 

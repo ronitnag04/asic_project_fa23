@@ -30,8 +30,7 @@ module DMEM (
 
     input [31:0] addr,
     input [31:0] din,
-    input re,
-    input [3:0] w_mask,
+    input [6:0] opcode,
     input [2:0] funct3,
 
     output [31:0] dcache_addr,
@@ -45,7 +44,11 @@ module DMEM (
 );
 
 assign dcache_addr = addr;
-wire [3:0] we;
+wire [3:0] we, we_mask;
+wire re;
+
+assign re = (opcode == `OPC_LOAD)  ? 1'b1    : 1'b0;
+assign we = (opcode == `OPC_STORE) ? we_mask : 4'b000; 
 
 always @(*) begin
     if (reset == 1'b1) begin
@@ -110,19 +113,54 @@ assign dcache_din = (funct3 == `FNC_SB)  ? din_sb    :
                     32'bx;
 
 wire [3:0] we_byte, we_half, we_word;
-assign we_byte = (addr[1:0] == 2'b11) ? {w_mask[0], 3'b0}       :
-                 (addr[1:0] == 2'b10) ? {1'b0, w_mask[0], 2'b0} :
-                 (addr[1:0] == 2'b01) ? {2'b0, w_mask[0], 1'b0} :
-                 (addr[1:0] == 2'b00) ? {3'b0, w_mask[0]}       :
-                 4'bx;
-assign we_half = (addr[1] == 1'b1) ? {w_mask[1:0], 2'b0}  :
-                 (addr[1] == 1'b0) ? {2'b0, w_mask[1:0]}  :
-                 4'bx;
-assign we_word = w_mask;
 
-assign we = (funct3 == `FNC_SB)  ? we_byte :
-            (funct3 == `FNC_SH)  ? we_half :
-            (funct3 == `FNC_SW)  ? we_word :
-            4'b0;
+assign we_byte = (addr[1:0] == 2'b11) ? 4'b1000 :
+                 (addr[1:0] == 2'b10) ? 4'b0100 :
+                 (addr[1:0] == 2'b01) ? 4'b0010 :
+                 (addr[1:0] == 2'b00) ? 4'b0001 :
+                 4'bx;
+
+assign we_half = (addr[1] == 1'b1) ? 4'b1100 :
+                 (addr[1] == 1'b0) ? 4'b0011 :
+                 4'bx;
+
+assign we_word = 4'b1111;
+
+assign we_mask = (funct3 == `FNC_SB)  ? we_byte :
+                 (funct3 == `FNC_SH)  ? we_half :
+                 (funct3 == `FNC_SW)  ? we_word :
+                 4'b0;
+
+property lb_msb_bits;
+    @(negedge clk) 
+    ((opcode == `OPC_LOAD) && (funct3 == `FNC_LB || funct3 == `FNC_LBU)) |-> 
+    (($countones(dout[31:8]) == 24 || $countones(dout[31:8]) == 0));
+endproperty
+LoadByteExtendedBits: assert property (lb_msb_bits);
+
+property lh_msb_bits;
+    @(negedge clk) 
+    ((opcode == `OPC_LOAD) && (funct3 == `FNC_LH || funct3 == `FNC_LHU)) |-> 
+    (($countones(dout[31:16]) == 16 || $countones(dout[31:16]) == 0));
+endproperty
+LoadHalfExtendedBits: assert property (lh_msb_bits);
+
+property store_mask_byte;
+    @(negedge clk)
+    ((opcode == `OPC_STORE) && (funct3 == `FNC_SB)) |-> $countones(dcache_we) == 1;
+endproperty
+StoreByteWriteMask: assert property(store_mask_byte);
+
+property store_mask_half;
+    @(negedge clk)
+    ((opcode == `OPC_STORE) && (funct3 == `FNC_SH)) |-> $countones(dcache_we) == 2;
+endproperty
+StoreHalfWriteMask: assert property(store_mask_half);
+
+property store_mask_word;
+    @(negedge clk)
+    ((opcode == `OPC_STORE) && (funct3 == `FNC_SW)) |-> $countones(dcache_we) == 4;
+endproperty
+StoreWordWriteMask: assert property(store_mask_word);    
 
 endmodule
