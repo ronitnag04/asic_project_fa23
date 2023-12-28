@@ -53,7 +53,7 @@ Stage1 Stage1(
     .rs2d(rs2d_i),
     .imm(imm_i),
     .inst(inst_i),
-    .csrd(csr)
+    .csrd_tohost(csr)
 );
 
 Transfer_1_2 Transfer_1_2(

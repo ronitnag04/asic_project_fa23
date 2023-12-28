@@ -57,7 +57,7 @@ module Stage1 (
     output [31:0] rs2d,
     output [31:0] imm,
     output [31:0] inst,
-    output [31:0] csrd
+    output [31:0] csrd_tohost
 );
 
 wire [31:0] inst_in;
@@ -119,7 +119,7 @@ CSR CSR(
     .csr_we(csr_we),
     .wb_data(wb_data_w),
 
-    .csrd(csrd) 
+    .csrd_tohost(csrd_tohost) 
 );
 
 endmodule

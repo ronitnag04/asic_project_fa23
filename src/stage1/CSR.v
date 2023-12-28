@@ -25,7 +25,7 @@ module CSR (
     input csr_we,
     input [31:0] wb_data,
 
-    output reg[31:0] csrd_tohost    
+    output reg [31:0] csrd_tohost    
 );
 
 always @(posedge clk) begin
