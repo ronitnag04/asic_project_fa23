@@ -34,7 +34,14 @@ module IMEM (
     output [31:0] inst
 );
 
-assign addr = pc;
+reg [31:0] pc_reg;
+
+always @(posedge clk) begin
+    if (reset) pc_reg <= 32'b0;
+    else if (stall ==1'b0) pc_reg <= pc;
+end
+
+assign addr = (stall == 1'b0) ? pc : pc_reg;
 assign inst = dout;
 assign re = 1'b1;
 

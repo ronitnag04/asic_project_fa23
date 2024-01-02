@@ -40,7 +40,9 @@ module Transfer_1_2 (
 );
 
 reg [31:0] pc_read;
-always @(posedge clk) pc_read <= pc_in;
+always @(posedge clk) begin
+    if (stall == 1'b0) pc_read <= pc_in;
+end
 
 always @(negedge clk) begin
     if (reset == 1'b1) begin
