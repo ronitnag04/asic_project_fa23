@@ -49,6 +49,8 @@ assign cpu_req_ready = (state == IDLE) ? 1'b1 : 1'b0;
 // Idx: 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
 //       T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  I  I  I  I  I  I  O  O  O  O 
 
+reg [3:0] cpu_req_write_hold;
+reg [31:0] cpu_req_data_hold;
 reg [29:0] cpu_req_addr_hold;
 wire [19:0] req_tag   = cpu_req_addr_hold[29:10];
 wire [5:0]  req_index = cpu_req_addr_hold[9:4];
@@ -68,15 +70,22 @@ assign mem_req_addr = {req_tag, req_index, write_step};
 // Bit: 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
 // USE: | ------------------------- TAG ------------------------- |  V  D  | --------- UNUSED --------|
 
-reg meta_we;
-reg meta_write_dirty;
-wire [31:0] meta_din = {req_tag, 1'b1, meta_write_dirty, {10{1'b0}}};
-
 wire [5:0] meta_addr = (state == IDLE) ? cpu_req_addr[9:4] : req_index;
 wire [31:0] meta_dout;
 wire [19:0] meta_tag = meta_dout[31:12];
 wire meta_valid = meta_dout[11];
 wire meta_dirty = meta_dout[10];
+
+wire cache_hit = ((req_tag == meta_tag) && (meta_valid == 1'b1)) ? 1'b1 : 1'b0;
+
+wire cache_write = ((state == META) && (cache_hit == 1'b1) && (cpu_req_write_hold != 4'b0000)) ? 1'b1 : 1'b0;
+wire mem_write = ((state == FETCH1) && (mem_resp_valid == 1'b1)) ? 1'b1 : 1'b0;
+
+wire meta_we = ((cache_write == 1'b1) || ((mem_write == 1'b1) && (write_step != 2'b11))) ? 1'b1 : 1'b0;
+wire meta_write_dirty = (cache_write    == 1'b1) ? 1'b1 :
+                        (mem_write == 1'b1) ? 1'b0 : 1'bx;
+
+wire [31:0] meta_din = {req_tag, 1'b1, meta_write_dirty, {10{1'b0}}};
 
 sram22_64x32m4w8 metadata (
   .clk(clk),
@@ -96,34 +105,30 @@ assign cpu_resp_data = (req_cache == 2'b00) ? cache0_dout :
                        (req_cache == 2'b11) ? cache3_dout :
                        32'bx;
 
-assign mem_req_data_bits = {cache0_dout, cache1_dout, cache2_dout, cache3_dout};
+assign mem_req_data_bits = {cache3_dout, cache2_dout, cache1_dout, cache0_dout};
 
 reg cache_din_sel;
 wire [31:0] cache0_din, cache1_din, cache2_din, cache3_din;
-reg [31:0] cpu_req_data_hold;
 
 assign cache0_din = (cache_din_sel == 1'b1) ? mem_resp_data[31:0]   : cpu_req_data_hold;
 assign cache1_din = (cache_din_sel == 1'b1) ? mem_resp_data[63:32]  : cpu_req_data_hold;
 assign cache2_din = (cache_din_sel == 1'b1) ? mem_resp_data[95:64]  : cpu_req_data_hold;
 assign cache3_din = (cache_din_sel == 1'b1) ? mem_resp_data[127:96] : cpu_req_data_hold;
 
-reg [3:0] cache_we;
-wire cache0_we = (cache_din_sel == 1'b0) ? cache_we[0] : 
-                 (mem_resp_valid == 1'b1) ? 1'b1 : 1'b0;
-wire cache1_we = (cache_din_sel == 1'b0) ? cache_we[1] : 
-                 (mem_resp_valid == 1'b1) ? 1'b1 : 1'b0;
-wire cache2_we = (cache_din_sel == 1'b0) ? cache_we[2] : 
-                 (mem_resp_valid == 1'b1) ? 1'b1 : 1'b0;
-wire cache3_we = (cache_din_sel == 1'b0) ? cache_we[3] : 
-                 (mem_resp_valid == 1'b1) ? 1'b1 : 1'b0;
+wire cache0_we = ((cache_write) && (req_cache == 2'b00)) ? 1'b1 : 
+                 (mem_write == 1'b1) ? 1'b1 : 1'b0;
+wire cache1_we = ((cache_write) && (req_cache == 2'b01)) ? 1'b1 : 
+                 (mem_write == 1'b1) ? 1'b1 : 1'b0;
+wire cache2_we = ((cache_write) && (req_cache == 2'b10)) ? 1'b1 : 
+                 (mem_write == 1'b1) ? 1'b1 : 1'b0;
+wire cache3_we = ((cache_write) && (req_cache == 2'b11)) ? 1'b1 : 
+                 (mem_write == 1'b1) ? 1'b1 : 1'b0;
 
-reg [3:0] cpu_req_write_hold;
 wire [3:0] cache0_mask, cache1_mask, cache2_mask, cache3_mask;
 assign cache0_mask = (cache_din_sel == 1'b1) ? 4'b1111: cpu_req_write_hold;
 assign cache1_mask = (cache_din_sel == 1'b1) ? 4'b1111: cpu_req_write_hold;
 assign cache2_mask = (cache_din_sel == 1'b1) ? 4'b1111: cpu_req_write_hold;
 assign cache3_mask = (cache_din_sel == 1'b1) ? 4'b1111: cpu_req_write_hold;
-
 
 reg cache_addr_sel;
 wire [7:0] cache0_addr, cache1_addr, cache2_addr, cache3_addr;
@@ -174,10 +179,7 @@ always @(posedge clk) begin
   if (reset == 1'b1) begin
     state <= IDLE;
     write_step <= 2'd0;
-    meta_we <= 1'b0;
-    meta_write_dirty <= 1'b0;
     cache_din_sel <= 1'b0;
-    cache_we <= 4'b0000;
     cache_addr_sel <= 1'b0;
 
     cpu_req_addr_hold <= 30'b0;
@@ -190,9 +192,6 @@ always @(posedge clk) begin
     mem_req_data_valid <= 1'b0;
   end else begin
     if (state == IDLE) begin
-      cache_we <= 4'b0000;
-      meta_we <= 1'b0;
-
       cpu_resp_valid <= 1'b0;
       mem_req_valid <= 1'b0;
       mem_req_rw <= 1'b0;
@@ -207,18 +206,10 @@ always @(posedge clk) begin
         state <= META;
       end
     end else if (state == META) begin
-      if ((req_tag == meta_tag) && (meta_valid == 1'b1)) begin
-        if (cpu_req_write == 4'b0000) begin
+      if (cache_hit == 1'b1) begin
+        if (cpu_req_write_hold == 4'b0000) begin
           cpu_resp_valid <= 1'b1;
-        end else begin
-          if (req_cache == 2'd0) cache_we <= 4'b0001;
-          else if (req_cache == 2'd1) cache_we <= 4'b0010;
-          else if (req_cache == 2'd2) cache_we <= 4'b0100;
-          else if (req_cache == 2'd3) cache_we <= 4'b1000;
-
-          meta_write_dirty <= 1'b1;
-          meta_we <= 1'b1;
-        end
+        end 
         state <= IDLE;
       end else begin
         if (meta_dirty == 1'b1) begin
@@ -236,8 +227,6 @@ always @(posedge clk) begin
             mem_req_valid <= 1'b1;
             cache_addr_sel <= 1'b1;
             cache_din_sel <= 1'b1;
-            meta_we <= 1'b1;
-            meta_write_dirty <= 1'b0;
             state <= FETCH1;
           end else begin
             mem_req_valid <= 1'b0;
@@ -270,21 +259,18 @@ always @(posedge clk) begin
         mem_req_valid <= 1'b1;
         cache_addr_sel <= 1'b1;
         cache_din_sel <= 1'b1;
-        meta_we <= 1'b1;
-        meta_write_dirty <= 1'b0;
         state <= FETCH1;
       end else begin
         mem_req_valid <= 1'b0;
       end
     end else if (state == FETCH1) begin
       if (mem_resp_valid == 1'b1) begin
-        if (write_step + 1 == 4) begin
+        if (write_step == 2'b11) begin
           write_step <= 2'd0;
           cache_din_sel <= 1'b0;
           state <= META;
         end else begin
           write_step <= write_step + 1'b1;
-          meta_we <= 1'b0;
           mem_req_valid <= 1'b0;
           state <= FETCH1;
         end
