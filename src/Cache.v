@@ -230,6 +230,8 @@ always @(posedge clk) begin
           mem_req_data_valid <= 1'b0;
           if ((mem_req_ready == 1'b1) && (mem_req_data_ready == 1'b1)) begin
             state <= WB1;
+          end else begin
+            state <= WB0;
           end
         end else begin
           mem_req_data_valid <= 1'b0;    // ****** SAME PATH 2
@@ -239,6 +241,7 @@ always @(posedge clk) begin
             state <= FETCH1;
           end else begin
             mem_req_valid <= 1'b0;
+            state <= FETCH0
           end
         end
       end 
