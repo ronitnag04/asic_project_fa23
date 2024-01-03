@@ -41,6 +41,7 @@ localparam WB0    = 3'b010;
 localparam WB1    = 3'b011;
 localparam FETCH0 = 3'b100;
 localparam FETCH1 = 3'b101;
+localparam WRITE  = 3'b110;
 
 assign cpu_req_ready = (state == IDLE) ? 1'b1 : 1'b0;
 
@@ -93,10 +94,11 @@ wire cache_write = ((state == META || state == IDLE) &&
 wire mem_write = ((state == FETCH1) && (mem_resp_valid == 1'b1)) ? 1'b1 : 1'b0;
 
 wire meta_we = ((cache_write == 1'b1) || ((mem_write == 1'b1) && (write_step != 2'b11))) ? 1'b1 : 1'b0;
-wire meta_write_dirty = (cache_write    == 1'b1) ? 1'b1 :
-                        (mem_write == 1'b1) ? 1'b0 : 1'bx;
+wire meta_write_dirty = (cache_write == 1'b1) ? 1'b1 :
+                        (mem_write == 1'b1)   ? 1'b0 : 1'bx;
 
 wire [31:0] meta_din = {req_tag_true, 1'b1, meta_write_dirty, {10{1'b0}}};
+// Optimize by encoding dirty sections with seperate dirty bits
 
 sram22_64x32m4w8 metadata (
   .clk(clk),
@@ -117,7 +119,7 @@ assign cpu_resp_data = (req_cache_hold == 2'b00) ? cache0_dout :
                        32'bx;
 
 assign mem_req_data_bits = {cache3_dout, cache2_dout, cache1_dout, cache0_dout};
-assign mem_req_data_mask = 16'b1111_1111_1111_1111;
+assign mem_req_data_mask = 16'b1111_1111_1111_1111;     // Optimize by only writing back dirty sections
 
 wire [31:0] cache0_din, cache1_din, cache2_din, cache3_din;
 
@@ -210,7 +212,9 @@ always @(posedge clk) begin
           cpu_req_addr_hold <= cpu_req_addr;
           if (cpu_req_write == 4'b0000) begin
             cpu_resp_valid <= 1'b1;
-          end 
+          end else begin
+            state <= WRITE;
+          end
         end else begin
           cpu_req_addr_hold <= cpu_req_addr;
           cpu_req_data_hold <= cpu_req_data;
@@ -222,8 +226,10 @@ always @(posedge clk) begin
       if (cache_hit == 1'b1) begin
         if (cpu_req_write_hold == 4'b0000) begin
           cpu_resp_valid <= 1'b1;
+          state <= IDLE;
+        end else begin
+          state <= WRITE;
         end 
-        state <= IDLE;
       end else begin
         if (meta_dirty == 1'b1) begin
           mem_req_rw <= 1'b0;               // ****** SAME PATH 1
@@ -245,7 +251,9 @@ always @(posedge clk) begin
             state <= FETCH0;
           end
         end
-      end 
+      end
+    end else if (state == WRITE) begin
+      state <= IDLE;
     end else if (state == WB0) begin
       mem_req_rw <= 1'b0;               // ****** SAME PATH 1
       mem_req_valid <= 1'b0;
@@ -257,7 +265,7 @@ always @(posedge clk) begin
       mem_req_rw <= 1'b1;
       mem_req_valid <= 1'b1;
       mem_req_data_valid <= 1'b1;
-      if (write_step + 1 == 4) begin
+      if (write_step == 2'b11) begin
         write_step <= 2'd0;
         state <= FETCH0;
       end else begin
