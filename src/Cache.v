@@ -121,7 +121,7 @@ assign cpu_resp_data = (req_cache_hold == 2'b00) ? cache0_dout :
 assign mem_req_data_bits = {cache3_dout, cache2_dout, cache1_dout, cache0_dout};
 assign mem_req_data_mask = 16'b1111_1111_1111_1111;     // Optimize by only writing back dirty sections
 
-assign mem_req_valid = ((state == WB1) || (state == FETCH1)) ? 1'b1 : 1'b0;
+assign mem_req_valid = ((state == WB1) || ((state == FETCH1) && (write_step == 2'b00))) ? 1'b1 : 1'b0;
 assign mem_req_rw = (state == WB1) ? 1'b1 :
                     (state == FETCH1) ? 1'b0: 1'bx;
 assign mem_req_data_valid = (state == WB1) ? 1'b1 : 1'b0;
@@ -269,7 +269,6 @@ always @(posedge clk) begin
           state <= META;
         end else begin
           write_step <= write_step + 1'b1;
-          state <= FETCH1;
         end
       end
     end
