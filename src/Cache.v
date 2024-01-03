@@ -150,10 +150,10 @@ assign cache3_mask = (state == FETCH1) ? 4'b1111: cpu_req_write_true;
 
 wire [7:0] cache0_addr, cache1_addr, cache2_addr, cache3_addr;
 
-assign cache0_addr = ((state == IDLE) || (state == META)) ? req_index_cache : write_index_cache;
-assign cache1_addr = ((state == IDLE) || (state == META)) ? req_index_cache : write_index_cache;
-assign cache2_addr = ((state == IDLE) || (state == META)) ? req_index_cache : write_index_cache;
-assign cache3_addr = ((state == IDLE) || (state == META)) ? req_index_cache : write_index_cache;
+assign cache0_addr = ((state == IDLE) || (state == META) || (state == WRITE)) ? req_index_cache : write_index_cache;
+assign cache1_addr = ((state == IDLE) || (state == META) || (state == WRITE)) ? req_index_cache : write_index_cache;
+assign cache2_addr = ((state == IDLE) || (state == META) || (state == WRITE)) ? req_index_cache : write_index_cache;
+assign cache3_addr = ((state == IDLE) || (state == META) || (state == WRITE)) ? req_index_cache : write_index_cache;
 
 sram22_256x32m4w8 cache0 (
   .clk(clk),
