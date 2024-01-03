@@ -117,6 +117,7 @@ assign cpu_resp_data = (req_cache_hold == 2'b00) ? cache0_dout :
                        32'bx;
 
 assign mem_req_data_bits = {cache3_dout, cache2_dout, cache1_dout, cache0_dout};
+assign mem_req_data_mask = 16'b1111_1111_1111_1111;
 
 wire [31:0] cache0_din, cache1_din, cache2_din, cache3_din;
 
