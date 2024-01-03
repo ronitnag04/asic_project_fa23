@@ -20,11 +20,11 @@ module cache #
   output reg                  cpu_resp_valid,     // *
   output reg [CPU_WIDTH-1:0]  cpu_resp_data,      // 32 bits *
 
-  output reg                  mem_req_valid,      // *
+  output                      mem_req_valid,      // *
   input                       mem_req_ready,
   output [WORD_ADDR_BITS-1:`ceilLog2(`MEM_DATA_BITS/CPU_WIDTH)] mem_req_addr,   // 29 : 2, 28 bits   *
-  output reg                       mem_req_rw,
-  output reg                       mem_req_data_valid,
+  output                           mem_req_rw,
+  output                           mem_req_data_valid,
   input                            mem_req_data_ready,
   output [`MEM_DATA_BITS-1:0]      mem_req_data_bits,
   // byte level masking
@@ -121,6 +121,11 @@ assign cpu_resp_data = (req_cache_hold == 2'b00) ? cache0_dout :
 assign mem_req_data_bits = {cache3_dout, cache2_dout, cache1_dout, cache0_dout};
 assign mem_req_data_mask = 16'b1111_1111_1111_1111;     // Optimize by only writing back dirty sections
 
+assign mem_req_valid = ((state == WB1) || (state == FETCH1)) ? 1'b1 : 1'b0;
+assign mem_req_rw = (state == WB1) ? 1'b1 :
+                    (state == FETCH1) ? 1'b0: 1'bx;
+assign mem_req_data_valid = (state == WB1) ? 1'b1 : 1'b0;
+
 wire [31:0] cache0_din, cache1_din, cache2_din, cache3_din;
 
 assign cache0_din = (state == FETCH1) ? mem_resp_data[31:0]   : cpu_req_data_true;
@@ -197,15 +202,9 @@ always @(posedge clk) begin
     cpu_req_write_hold <= 4'b0;
 
     cpu_resp_valid <= 1'b0;
-    mem_req_valid <= 1'b0;
-    mem_req_rw <= 1'b0;
-    mem_req_data_valid <= 1'b0;
   end else begin
     if (state == IDLE) begin
       cpu_resp_valid <= 1'b0;
-      mem_req_valid <= 1'b0;
-      mem_req_rw <= 1'b0;
-      mem_req_data_valid <= 1'b0;
 
       if (cpu_req_valid == 1'b1) begin
         if ((req_tag == req_tag_hold) && (req_index == req_index_hold) && (cache_hit == 1'b1)) begin
@@ -232,22 +231,15 @@ always @(posedge clk) begin
         end 
       end else begin
         if (meta_dirty == 1'b1) begin
-          mem_req_rw <= 1'b0;               // ****** SAME PATH 1
-          mem_req_valid <= 1'b0;
-          mem_req_data_valid <= 1'b0;
-          if ((mem_req_ready == 1'b1) && (mem_req_data_ready == 1'b1)) begin
+          if ((mem_req_ready == 1'b1) && (mem_req_data_ready == 1'b1)) begin    // ****** SAME PATH 1
             state <= WB1;
           end else begin
             state <= WB0;
           end
         end else begin
-          mem_req_data_valid <= 1'b0;    // ****** SAME PATH 2
-          if (mem_req_ready == 1'b1) begin
-            mem_req_rw <= 1'b0;
-            mem_req_valid <= 1'b1;
+          if (mem_req_ready == 1'b1) begin    // ****** SAME PATH 2
             state <= FETCH1;
           end else begin
-            mem_req_valid <= 1'b0;
             state <= FETCH0;
           end
         end
@@ -255,31 +247,20 @@ always @(posedge clk) begin
     end else if (state == WRITE) begin
       state <= IDLE;
     end else if (state == WB0) begin
-      mem_req_rw <= 1'b0;               // ****** SAME PATH 1
-      mem_req_valid <= 1'b0;
-      mem_req_data_valid <= 1'b0;
-      if ((mem_req_ready == 1'b1) && (mem_req_data_ready == 1'b1)) begin
+      if ((mem_req_ready == 1'b1) && (mem_req_data_ready == 1'b1)) begin   // ****** SAME PATH 1
         state <= WB1;
       end
+    end else if (state == FETCH0) begin  // ****** SAME PATH 2
+      if (mem_req_ready == 1'b1) begin
+        state <= FETCH1;
+      end
     end else if (state == WB1) begin
-      mem_req_rw <= 1'b1;
-      mem_req_valid <= 1'b1;
-      mem_req_data_valid <= 1'b1;
       if (write_step == 2'b11) begin
         write_step <= 2'd0;
         state <= FETCH0;
       end else begin
         write_step <= write_step + 1'b1;
         state <= WB0;
-      end
-    end else if (state == FETCH0) begin
-      mem_req_data_valid <= 1'b0;        // ****** SAME PATH 2
-      if (mem_req_ready == 1'b1) begin
-        mem_req_rw <= 1'b0;
-        mem_req_valid <= 1'b1;
-        state <= FETCH1;
-      end else begin
-        mem_req_valid <= 1'b0;
       end
     end else if (state == FETCH1) begin
       if (mem_resp_valid == 1'b1) begin
@@ -288,7 +269,6 @@ always @(posedge clk) begin
           state <= META;
         end else begin
           write_step <= write_step + 1'b1;
-          mem_req_valid <= 1'b0;
           state <= FETCH1;
         end
       end
