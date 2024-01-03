@@ -44,6 +44,7 @@ localparam FETCH1 = 3'b101;
 localparam WRITE  = 3'b110;
 
 assign cpu_req_ready = (state == IDLE) ? 1'b1 : 1'b0;
+wire cpu_req_fire = ((cpu_req_ready == 1'b1) && (cpu_req_valid)) ? 1'b1 : 1'b0;
 
 // CPU Req Addr
 // Bit: 31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10  9  8  7  6  5  4  3  2
@@ -123,8 +124,9 @@ assign mem_req_data_mask = 16'b1111_1111_1111_1111;     // Optimize by only writ
 
 assign mem_req_valid = ((state == WB1) || ((state == FETCH1) && (write_step == 2'b00))) ? 1'b1 : 1'b0;
 assign mem_req_rw = (state == WB1) ? 1'b1 :
-                    (state == FETCH1) ? 1'b0: 1'bx;
+                    (state == FETCH1) ? 1'b0: 1'b0;
 assign mem_req_data_valid = (state == WB1) ? 1'b1 : 1'b0;
+wire mem_req_fire = ((mem_req_ready == 1'b1) && (mem_req_valid == 1'b1)) ? 1'b1 : 1'b0;
 
 wire [31:0] cache0_din, cache1_din, cache2_din, cache3_din;
 
