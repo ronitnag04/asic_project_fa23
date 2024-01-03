@@ -241,7 +241,7 @@ always @(posedge clk) begin
             state <= FETCH1;
           end else begin
             mem_req_valid <= 1'b0;
-            state <= FETCH0
+            state <= FETCH0;
           end
         end
       end 
