@@ -60,7 +60,6 @@ reg [1:0] mem_step;
 //       T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  T  I  I  I  I  I  I  O  O  O  O 
 
 assign cpu_req_ready = (state == IDLE) ? 1'b1 : 1'b0;
-// wire cpu_req_fire = ((cpu_req_ready == 1'b1) && (cpu_req_valid)) ? 1'b1 : 1'b0;
 
 reg [3:0] cpu_req_write_hold;
 wire [3:0] cpu_req_write_true = (state == IDLE) ? cpu_req_write : cpu_req_write_hold;
@@ -217,7 +216,6 @@ assign mem_req_valid = ((state == WB) || ((state == FETCH) && (mem_step == 2'b00
 assign mem_req_rw = (state == WB) ? 1'b1 :
                     (state == FETCH) ? 1'b0: 1'b0;
 assign mem_req_data_valid = (state == WB) ? 1'b1 : 1'b0;
-wire mem_req_fire = ((mem_req_ready == 1'b1) && (mem_req_valid == 1'b1)) ? 1'b1 : 1'b0;
 
 assign mem_req_addr = {req_tag_true, req_index_true, mem_step};
 
