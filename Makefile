@@ -58,7 +58,7 @@ asm_output_dir   = $(vlsi_dir)/asm_output
 bmark_output_dir = $(vlsi_dir)/bmark_output
 bmark_short_output_dir = $(vlsi_dir)/bmark_short_output
 asm_timeout_cycles   = 50000
-bmark_timeout_cycles = 500000000
+bmark_timeout_cycles = 50000000
 bmark_short_timeout_cycles = 50000000
 simv             = $(vlsi_dir)/build/sim-rundir/simv
 
