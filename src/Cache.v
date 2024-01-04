@@ -88,10 +88,12 @@ wire [19:0] meta_tag = meta_dout[31:12];
 wire meta_valid = meta_dout[11];
 wire meta_dirty = meta_dout[10];
 
-wire cache_hit = ((req_tag_true == meta_tag) && (meta_valid == 1'b1)) ? 1'b1 : 1'b0;
+wire cache_hit = ((req_index_true == req_index_hold) && 
+                  (req_tag_true == meta_tag) && (meta_valid == 1'b1)) ? 1'b1 : 1'b0;
 
 wire cache_write = ((state == META || state == IDLE) && 
                     (cache_hit == 1'b1) && (cpu_req_write_true != 4'b0000)) ? 1'b1 : 1'b0;
+                    
 wire mem_write = ((state == FETCH1) && (mem_resp_valid == 1'b1)) ? 1'b1 : 1'b0;
 
 wire meta_we = ((cache_write == 1'b1) || ((mem_write == 1'b1) && (write_step != 2'b11))) ? 1'b1 : 1'b0;
