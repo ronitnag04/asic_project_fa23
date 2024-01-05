@@ -213,11 +213,14 @@ assign mem_req_data_bits = {cache3_dout, cache2_dout, cache1_dout, cache0_dout};
 assign mem_req_data_mask = 16'b1111_1111_1111_1111;     // Optimize by only writing back dirty sections
 
 assign mem_req_valid = ((state == WB) || (state == WB_WAIT) || (state == FETCH_WAIT) || 
-                        ((state == FETCH) && (mem_step == 2'b00))) ? 1'b1 : 1'b0;
+                        ((state == FETCH) && (mem_step == 2'b00)) ||
+                        ((state == META) && (cache_hit == 1'b0))) ? 1'b1 : 1'b0;
 
-assign mem_req_rw = ((state == WB) || (state == WB_WAIT)) ? 1'b1 :
-                    ((state == FETCH) || (state == FETCH_WAIT)) ? 1'b0: 1'b0;
-                    
+assign mem_req_rw = ((state == WB) || (state == WB_WAIT) ||
+                     ((state == META) && (cache_hit == 1'b0) && (meta_dirty == 1'b1))) ? 1'b1 :
+                    ((state == FETCH) || (state == FETCH_WAIT) || 
+                     ((state == META) && (cache_hit == 1'b0) && (meta_dirty == 1'b0))) ? 1'b0: 1'b0;
+
 assign mem_req_data_valid = ((state == WB) || (state == WB_WAIT)) ? 1'b1 : 1'b0;
 
 assign mem_req_addr = {req_tag_true, req_index_true, mem_step};
@@ -265,7 +268,7 @@ always @(posedge clk) begin
         end 
       end else begin
         if (meta_dirty == 1'b1) begin
-          if ((mem_req_ready == 1'b1) && (mem_req_data_ready == 1'b1)) begin    // ****** SAME PATH 1
+          if ((mem_req_ready == 1'b1)) begin    // ****** SAME PATH 1
             state <= WB;
           end else begin
             state <= WB_WAIT;
@@ -281,7 +284,7 @@ always @(posedge clk) begin
     end else if (state == WRITE) begin
       state <= IDLE;
     end else if (state == WB_WAIT) begin
-      if ((mem_req_ready == 1'b1) && (mem_req_data_ready == 1'b1)) begin   // ****** SAME PATH 1
+      if ((mem_req_ready == 1'b1)) begin   // ****** SAME PATH 1
         state <= WB;
       end
     end else if (state == FETCH_WAIT) begin  // ****** SAME PATH 2
@@ -289,10 +292,10 @@ always @(posedge clk) begin
         state <= FETCH;
       end
     end else if (state == WB) begin
-      if (mem_step == 2'b11) begin
+      if ((mem_step == 2'b11) && (mem_req_data_ready == 1'b1)) begin
         mem_step <= 2'd0;
         state <= FETCH_WAIT;
-      end else begin
+      end else if (mem_req_data_ready == 1'b1) begin
         mem_step <= mem_step + 1'b1;
         state <= WB_WAIT;
       end
