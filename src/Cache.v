@@ -212,10 +212,13 @@ sram22_256x32m4w8 cache3 (
 assign mem_req_data_bits = {cache3_dout, cache2_dout, cache1_dout, cache0_dout};
 assign mem_req_data_mask = 16'b1111_1111_1111_1111;     // Optimize by only writing back dirty sections
 
-assign mem_req_valid = ((state == WB) || ((state == FETCH) && (mem_step == 2'b00))) ? 1'b1 : 1'b0;
-assign mem_req_rw = (state == WB) ? 1'b1 :
-                    (state == FETCH) ? 1'b0: 1'b0;
-assign mem_req_data_valid = (state == WB) ? 1'b1 : 1'b0;
+assign mem_req_valid = ((state == WB) || (state == WB_WAIT) || (state == FETCH_WAIT) || 
+                        ((state == FETCH) && (mem_step == 2'b00))) ? 1'b1 : 1'b0;
+
+assign mem_req_rw = ((state == WB) || (state == WB_WAIT)) ? 1'b1 :
+                    ((state == FETCH) || (state == FETCH_WAIT)) ? 1'b0: 1'b0;
+                    
+assign mem_req_data_valid = ((state == WB) || (state == WB_WAIT)) ? 1'b1 : 1'b0;
 
 assign mem_req_addr = {req_tag_true, req_index_true, mem_step};
 
