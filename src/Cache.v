@@ -268,7 +268,7 @@ always @(posedge clk) begin
         end 
       end else begin
         if (meta_dirty == 1'b1) begin
-          if ((mem_req_ready == 1'b1)) begin    // ****** SAME PATH 1
+          if (mem_req_ready == 1'b1) begin    // ****** SAME PATH 1
             state <= WB;
           end else begin
             state <= WB_WAIT;
@@ -284,7 +284,7 @@ always @(posedge clk) begin
     end else if (state == WRITE) begin
       state <= IDLE;
     end else if (state == WB_WAIT) begin
-      if ((mem_req_ready == 1'b1)) begin   // ****** SAME PATH 1
+      if (mem_req_ready == 1'b1) begin   // ****** SAME PATH 1
         state <= WB;
       end
     end else if (state == FETCH_WAIT) begin  // ****** SAME PATH 2
@@ -292,12 +292,14 @@ always @(posedge clk) begin
         state <= FETCH;
       end
     end else if (state == WB) begin
-      if ((mem_step == 2'b11) && (mem_req_data_ready == 1'b1)) begin
-        mem_step <= 2'd0;
-        state <= FETCH_WAIT;
-      end else if (mem_req_data_ready == 1'b1) begin
-        mem_step <= mem_step + 1'b1;
-        state <= WB_WAIT;
+      if (mem_req_data_ready == 1'b1) begin
+        if (mem_step == 2'b11) begin
+          mem_step <= 2'd0;
+          state <= FETCH_WAIT;
+        end else begin
+          mem_step <= mem_step + 1'b1;
+          state <= WB_WAIT;
+        end
       end
     end else if (state == FETCH) begin
       if (mem_resp_valid == 1'b1) begin
