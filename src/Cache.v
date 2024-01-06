@@ -223,7 +223,14 @@ assign mem_req_rw = ((state == WB) || (state == WB_WAIT) ||
 
 assign mem_req_data_valid = ((state == WB) || (state == WB_WAIT)) ? 1'b1 : 1'b0;
 
-assign mem_req_addr = {req_tag_true, req_index_true, mem_step};
+wire [WORD_ADDR_BITS-1:`ceilLog2(`MEM_DATA_BITS/CPU_WIDTH)] mem_addr_fetch, mem_addr_wb;
+assign mem_addr_fetch = {req_tag_true, req_index_true, mem_step};
+assign mem_addr_wb = {meta_tag, req_index_true, mem_step};
+
+assign mem_req_addr = ((state == FETCH) || (state == FETCH_WAIT) ||
+                       ((state == META) && (cache_hit == 1'b0) && (meta_dirty == 1'b0))) ? mem_addr_fetch :
+                      ((state == WB) || (state == WB_WAIT) ||
+                       ((state == META) && (cache_hit == 1'b0) && (meta_dirty == 1'b1))) ? mem_addr_wb : 28'bx;
 
 
 // --------------------------------------------------
